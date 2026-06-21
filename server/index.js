@@ -4,6 +4,9 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
+const roomRoutes = require("./routes/roomRoutes");
+
+
 
 const app = express();
 
@@ -15,6 +18,7 @@ app.use(cors());
 
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/rooms", roomRoutes);
 
 
 // mongoose
