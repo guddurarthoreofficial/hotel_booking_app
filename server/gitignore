@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+
+# Build folders
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Temporary files
+tmp/
+temp/
+
+# Nodemon
+.nodemon
+
+# Cache
+.cache/
+
+# Uploads (if local uploads)
+uploads/
+
+# MongoDB local files (if any)
+data/       
