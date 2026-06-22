@@ -7,6 +7,7 @@ const {
   updateRoom,
   getRoomById,
   uploadRoomImages,
+  deleteRoomImage,
 } = require("../controllers/roomController");
 
 const protect = require("../middleware/authMiddleware");
@@ -47,6 +48,13 @@ router.post(
   authorize("admin", "manager"),
   upload.array("images", 10),
   uploadRoomImages
+);
+
+router.delete(
+  "/:roomId/images",
+  protect,
+  authorize("admin", "manager"),
+  deleteRoomImage
 );
 
 module.exports = router;

@@ -186,6 +186,43 @@ const uploadRoomImages = async (req, res) => {
   }
 };
 
+
+const deleteRoomImage = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const { public_id } = req.body;
+
+    const room = await Room.findById(roomId);
+
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: "Room not found",
+      });
+    }
+
+    await cloudinary.uploader.destroy(public_id);
+
+    room.images = room.images.filter(
+      (img) => img.public_id !== public_id
+    );
+
+    await room.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Image deleted successfully",
+      images: room.images,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   createRoom,
   getRooms,
@@ -193,4 +230,5 @@ module.exports = {
   updateRoom,
   deleteRoom,
   uploadRoomImages,
+  deleteRoomImage,
 };

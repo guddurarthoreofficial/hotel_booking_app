@@ -10,7 +10,6 @@ const roomRoutes = require("./routes/roomRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
-const errorHandler = require("./middleware/errorMiddleware");
 
 
 
@@ -18,7 +17,6 @@ dotenv.config();
 //middleware
 app.use(express.json());
 app.use(cors());  
-app.use(errorHandler);
 
 
 // routes
