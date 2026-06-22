@@ -8,15 +8,16 @@ const roomSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    images: [
+      {
+        public_id: String,
+        url: String,
+      },
+    ],
 
     roomType: {
       type: String,
-      enum: [
-        "standard",
-        "deluxe",
-        "premium",
-        "suite",
-      ],
+      enum: ["standard", "deluxe", "premium", "suite"],
       required: true,
     },
 
@@ -38,11 +39,7 @@ const roomSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: [
-        "available",
-        "occupied",
-        "maintenance",
-      ],
+      enum: ["available", "occupied", "maintenance"],
       default: "available",
     },
 
@@ -53,10 +50,7 @@ const roomSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-module.exports = mongoose.model(
-  "Room",
-  roomSchema
-);
+module.exports = mongoose.model("Room", roomSchema);

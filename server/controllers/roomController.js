@@ -1,4 +1,5 @@
 const Room = require("../models/Room");
+const cloudinary = require("../config/cloudinary");
 
 const createRoom = async (req, res) => {
   try {
@@ -134,10 +135,62 @@ const deleteRoom = async (req, res) => {
   }
 };
 
+
+const uploadRoomImages = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.id);
+
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: "Room not found",
+      });
+    }
+
+    const uploadedImages = [];
+
+    for (const file of req.files) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "hotel_rooms",
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          )
+          .end(file.buffer);
+      });
+
+      uploadedImages.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    room.images.push(...uploadedImages);
+
+    await room.save();
+
+    res.status(200).json({
+      success: true,
+      images: room.images,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createRoom,
   getRooms,
   getRoomById,
   updateRoom,
   deleteRoom,
+  uploadRoomImages,
 };
