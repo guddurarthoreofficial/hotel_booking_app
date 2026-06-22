@@ -191,10 +191,39 @@ const checkInBooking = async (req, res) => {
   }
 };
 
+
+const checkOutBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    booking.status = "checked_out";
+
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Guest checked out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
   getMyBookings,
   cancelBooking,
   getBookingById,
   checkInBooking,
+  checkOutBooking,
 };
