@@ -3,20 +3,22 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
+const app = express();
+
 const authRoutes = require("./routes/authRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
+const errorHandler = require("./middleware/errorMiddleware");
 
 
-
-const app = express();
 
 dotenv.config();
 //middleware
 app.use(express.json());
 app.use(cors());  
+app.use(errorHandler);
 
 
 // routes
