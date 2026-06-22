@@ -7,6 +7,7 @@ const {
   getBookingById,
   checkInBooking,
   checkOutBooking,
+  markBookingAsPaid,
 } = require("../controllers/bookingController");
 
 const protect = require("../middleware/authMiddleware");
@@ -20,6 +21,8 @@ router.put("/:id/cancel", protect, cancelBooking);
 router.get("/:id", protect, getBookingById);
 router.put("/:id/checkin", protect, authorize("admin", "manager","receptionist"), checkInBooking);
 router.put("/:id/checkout", protect, authorize("admin", "manager", "receptionist"), checkOutBooking);
+
+router.put("/:id/mark-paid", protect, authorize("admin", "manager", "receptionist"), markBookingAsPaid );
 
 
 module.exports = router;

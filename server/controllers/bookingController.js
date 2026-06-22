@@ -3,12 +3,8 @@ const Room = require("../models/Room");
 
 const createBooking = async (req, res) => {
   try {
-    const {
-      room,
-      checkInDate,
-      checkOutDate,
-      totalGuests,
-    } = req.body;
+    const { room, checkInDate, checkOutDate, totalGuests, paymentMethod } =
+      req.body;
 
     // Check room exists
     const roomExists = await Room.findById(room);
@@ -24,11 +20,7 @@ const createBooking = async (req, res) => {
     const existingBooking = await Booking.findOne({
       room,
       status: {
-        $in: [
-          "pending",
-          "confirmed",
-          "checked_in",
-        ],
+        $in: ["pending", "confirmed", "checked_in"],
       },
       checkInDate: {
         $lt: new Date(checkOutDate),
@@ -41,18 +33,21 @@ const createBooking = async (req, res) => {
     if (existingBooking) {
       return res.status(400).json({
         success: false,
-        message:
-          "Room already booked for selected dates",
+        message: "Room already booked for selected dates",
       });
     }
 
     const nights =
-      (new Date(checkOutDate) -
-        new Date(checkInDate)) /
-      (1000 * 60 * 60 * 24);
+      (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24);
 
-    const totalAmount =
-      nights * roomExists.pricePerNight;
+    const totalAmount = nights * roomExists.pricePerNight;
+
+    if (nights <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Check-out date must be after check-in date",
+      });
+    }
 
     const booking = await Booking.create({
       guest: req.user._id,
@@ -61,6 +56,9 @@ const createBooking = async (req, res) => {
       checkOutDate,
       totalGuests,
       totalAmount,
+
+      paymentMethod: paymentMethod || "cash",
+      paymentStatus: "pending",
     });
 
     res.status(201).json({
@@ -75,7 +73,79 @@ const createBooking = async (req, res) => {
   }
 };
 
+// const createBooking = async (req, res) => {
+//   try {
+//     const {
+//       room,
+//       checkInDate,
+//       checkOutDate,
+//       totalGuests,
+//     } = req.body;
 
+//     // Check room exists
+//     const roomExists = await Room.findById(room);
+
+//     if (!roomExists) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Room not found",
+//       });
+//     }
+
+//     // Check overlapping bookings
+//     const existingBooking = await Booking.findOne({
+//       room,
+//       status: {
+//         $in: [
+//           "pending",
+//           "confirmed",
+//           "checked_in",
+//         ],
+//       },
+//       checkInDate: {
+//         $lt: new Date(checkOutDate),
+//       },
+//       checkOutDate: {
+//         $gt: new Date(checkInDate),
+//       },
+//     });
+
+//     if (existingBooking) {
+//       return res.status(400).json({
+//         success: false,
+//         message:
+//           "Room already booked for selected dates",
+//       });
+//     }
+
+//     const nights =
+//       (new Date(checkOutDate) -
+//         new Date(checkInDate)) /
+//       (1000 * 60 * 60 * 24);
+
+//     const totalAmount =
+//       nights * roomExists.pricePerNight;
+
+//     const booking = await Booking.create({
+//       guest: req.user._id,
+//       room,
+//       checkInDate,
+//       checkOutDate,
+//       totalGuests,
+//       totalAmount,
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       booking,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
 
 const getMyBookings = async (req, res) => {
   try {
@@ -98,12 +168,9 @@ const getMyBookings = async (req, res) => {
   }
 };
 
-
 const cancelBooking = async (req, res) => {
   try {
-    const booking = await Booking.findById(
-      req.params.id
-    );
+    const booking = await Booking.findById(req.params.id);
 
     if (!booking) {
       return res.status(404).json({
@@ -112,10 +179,7 @@ const cancelBooking = async (req, res) => {
       });
     }
 
-    if (
-      booking.guest.toString() !==
-      req.user._id.toString()
-    ) {
+    if (booking.guest.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: "Access denied",
@@ -163,7 +227,6 @@ const getBookingById = async (req, res) => {
   }
 };
 
-
 const checkInBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
@@ -190,7 +253,6 @@ const checkInBooking = async (req, res) => {
     });
   }
 };
-
 
 const checkOutBooking = async (req, res) => {
   try {
@@ -219,6 +281,36 @@ const checkOutBooking = async (req, res) => {
   }
 };
 
+
+
+const markBookingAsPaid = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    booking.paymentStatus = "paid";
+
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Payment marked as paid",
+      booking,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
   getMyBookings,
@@ -226,4 +318,5 @@ module.exports = {
   getBookingById,
   checkInBooking,
   checkOutBooking,
+  markBookingAsPaid,
 };
