@@ -10,6 +10,10 @@ const roomRoutes = require("./routes/roomRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
+const emailRoutes = require("./routes/emailRoutes");
+
+
 
 
 
@@ -27,6 +31,8 @@ app.use("/api/rooms", roomRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/emails", emailRoutes);
 
 
 // mongoose
