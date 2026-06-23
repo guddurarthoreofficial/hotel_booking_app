@@ -1,5 +1,6 @@
 const Booking = require("../models/Booking");
 const Room = require("../models/Room");
+const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 
 const createBooking = async (req, res) => {
@@ -129,9 +130,37 @@ const cancelBooking = async (req, res) => {
       });
     }
 
+    if (booking.status === "cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Booking is already cancelled",
+      });
+    }
+
+    if (booking.status === "checked_out") {
+      return res.status(400).json({
+        success: false,
+        message: "Completed booking cannot be cancelled",
+      });
+    }
+
     booking.status = "cancelled";
 
     await booking.save();
+
+    const user = await User.findById(booking.guest);
+
+    await sendEmail(
+      user.email,
+      "Booking Cancelled",
+      `
+    <h2>Booking Cancelled</h2>
+
+    <p>Your booking has been cancelled successfully.</p>
+
+    <p>Booking ID: ${booking._id}</p>
+  `,
+    );
 
     res.status(200).json({
       success: true,
@@ -238,6 +267,26 @@ const markBookingAsPaid = async (req, res) => {
     booking.paymentStatus = "paid";
 
     await booking.save();
+
+    const user = await User.findById(booking.guest);
+
+    await sendEmail(
+      user.email,
+      "Payment Received",
+      `
+    <h2>Payment Received Successfully</h2>
+
+    <p>We have received your payment.</p>
+
+    <p><strong>Booking ID:</strong> ${booking._id}</p>
+
+    <p><strong>Amount:</strong> ₹${booking.totalAmount}</p>
+
+    <p><strong>Payment Method:</strong> ${booking.paymentMethod}</p>
+
+    <p>Thank you for choosing our hotel.</p>
+  `,
+    );
 
     res.status(200).json({
       success: true,

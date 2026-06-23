@@ -1,6 +1,8 @@
 const razorpay = require("../config/razorpay");
 const Booking = require("../models/Booking");
 const crypto = require("crypto");
+const User = require("../models/User");
+const sendEmail = require("../utils/sendEmail");
 
 
 const createPaymentOrder = async (req, res) => {
@@ -13,7 +15,6 @@ const createPaymentOrder = async (req, res) => {
         message: "Booking not found",
       });
     }
-
 
     const options = {
       amount: booking.totalAmount * 100, // paise
@@ -35,8 +36,6 @@ const createPaymentOrder = async (req, res) => {
   }
 };
 
-
-
 const verifyPayment = async (req, res) => {
   try {
     const {
@@ -46,22 +45,14 @@ const verifyPayment = async (req, res) => {
       bookingId,
     } = req.body;
 
-    const body =
-      razorpay_order_id +
-      "|" +
-      razorpay_payment_id;
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-    const expectedSignature =
-      crypto
-        .createHmac(
-          "sha256",
-          process.env.RAZORPAY_KEY_SECRET
-        )
-        .update(body.toString())
-        .digest("hex");
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body.toString())
+      .digest("hex");
 
-    const isAuthentic =
-      expectedSignature === razorpay_signature;
+    const isAuthentic = expectedSignature === razorpay_signature;
 
     if (!isAuthentic) {
       return res.status(400).json({
@@ -70,14 +61,30 @@ const verifyPayment = async (req, res) => {
       });
     }
 
-    const booking =
-      await Booking.findById(bookingId);
+    const booking = await Booking.findById(bookingId);
 
     booking.paymentStatus = "paid";
-    booking.transactionId =
-      razorpay_payment_id;
+    booking.transactionId = razorpay_payment_id;
 
     await booking.save();
+
+    const user = await User.findById(booking.guest);
+
+    await sendEmail(
+      user.email,
+      "Payment Successful",
+      `
+    <h2>Payment Successful</h2>
+
+    <p>Your payment has been received successfully.</p>
+
+    <p><strong>Booking ID:</strong> ${booking._id}</p>
+
+    <p><strong>Transaction ID:</strong> ${razorpay_payment_id}</p>
+
+    <p><strong>Amount:</strong> ₹${booking.totalAmount}</p>
+  `,
+    );
 
     res.status(200).json({
       success: true,
@@ -90,8 +97,6 @@ const verifyPayment = async (req, res) => {
     });
   }
 };
-
-
 
 module.exports = {
   createPaymentOrder,
