@@ -23,7 +23,9 @@ const generateInvoice = async (req, res) => {
 
     const doc = new PDFDocument();
 
-    doc.pipe(fs.createWriteStream(invoicePath));
+    const stream = fs.createWriteStream(invoicePath);
+
+    doc.pipe(stream);
 
     // Header
     doc.fontSize(22).text("HOTEL MANAGEMENT SYSTEM", {
@@ -31,7 +33,6 @@ const generateInvoice = async (req, res) => {
     });
 
     doc.moveDown();
-
 
     doc.fontSize(18).text("INVOICE", {
       align: "center",
@@ -51,7 +52,6 @@ const generateInvoice = async (req, res) => {
 
     doc.text(`Check Out: ${new Date(booking.checkOutDate).toDateString()}`);
 
-
     doc.moveDown();
 
     doc.text(`Payment Method: ${booking.paymentMethod}`);
@@ -68,21 +68,33 @@ const generateInvoice = async (req, res) => {
       align: "center",
     });
 
-
-
-    const stream = fs.createWriteStream(invoicePath);
-
-    doc.pipe(stream);
-
-    // PDF content
-
     doc.end();
 
     stream.on("finish", () => {
-      return res.download(invoicePath);
+      res.download(invoicePath, (err) => {
+        if (err) {
+          console.error("Download Error:", err);
+          return;
+        }
+
+        fs.unlink(invoicePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error("File Delete Error:", unlinkErr);
+          } else {
+            console.log(`Invoice deleted: ${invoiceName}`);
+          }
+        });
+      });
     });
 
-    console.log("test 7");
+    stream.on("error", (err) => {
+      console.error("Stream Error:", err);
+
+      return res.status(500).json({
+        success: false,
+        message: "Failed to generate invoice",
+      });
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
