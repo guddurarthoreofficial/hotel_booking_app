@@ -1,5 +1,6 @@
 const Booking = require("../models/Booking");
 const Room = require("../models/Room");
+const sendEmail = require("../utils/sendEmail");
 
 const createBooking = async (req, res) => {
   try {
@@ -61,6 +62,22 @@ const createBooking = async (req, res) => {
       paymentStatus: "pending",
     });
 
+    await sendEmail(
+      req.user.email,
+      "Booking Confirmation",
+      `
+    <h2>Booking Confirmed</h2>
+
+    <p>Your booking has been created successfully.</p>
+
+    <p><strong>Booking ID:</strong> ${booking._id}</p>
+
+    <p><strong>Total Amount:</strong> ₹${booking.totalAmount}</p>
+
+    <p>Thank you for choosing our hotel.</p>
+  `,
+    );
+
     res.status(201).json({
       success: true,
       booking,
@@ -72,80 +89,6 @@ const createBooking = async (req, res) => {
     });
   }
 };
-
-// const createBooking = async (req, res) => {
-//   try {
-//     const {
-//       room,
-//       checkInDate,
-//       checkOutDate,
-//       totalGuests,
-//     } = req.body;
-
-//     // Check room exists
-//     const roomExists = await Room.findById(room);
-
-//     if (!roomExists) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Room not found",
-//       });
-//     }
-
-//     // Check overlapping bookings
-//     const existingBooking = await Booking.findOne({
-//       room,
-//       status: {
-//         $in: [
-//           "pending",
-//           "confirmed",
-//           "checked_in",
-//         ],
-//       },
-//       checkInDate: {
-//         $lt: new Date(checkOutDate),
-//       },
-//       checkOutDate: {
-//         $gt: new Date(checkInDate),
-//       },
-//     });
-
-//     if (existingBooking) {
-//       return res.status(400).json({
-//         success: false,
-//         message:
-//           "Room already booked for selected dates",
-//       });
-//     }
-
-//     const nights =
-//       (new Date(checkOutDate) -
-//         new Date(checkInDate)) /
-//       (1000 * 60 * 60 * 24);
-
-//     const totalAmount =
-//       nights * roomExists.pricePerNight;
-
-//     const booking = await Booking.create({
-//       guest: req.user._id,
-//       room,
-//       checkInDate,
-//       checkOutDate,
-//       totalGuests,
-//       totalAmount,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       booking,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
 
 const getMyBookings = async (req, res) => {
   try {
@@ -280,8 +223,6 @@ const checkOutBooking = async (req, res) => {
     });
   }
 };
-
-
 
 const markBookingAsPaid = async (req, res) => {
   try {
