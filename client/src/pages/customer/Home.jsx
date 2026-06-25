@@ -1,18 +1,12 @@
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+import AuthLayout from "../../layouts/AuthLayout";
 
 const Home = () => {
   return (
-    <div className="max-w-md mx-auto mt-20 p-6">
-      <Input
-        label="Email"
-        placeholder="Enter your email"
-      />
-
-      <Button>
-        Test Button
-      </Button>
-    </div>
+    <AuthLayout title="Hotel Booking">
+      <p className="text-center">
+        Layout Working
+      </p>
+    </AuthLayout>
   );
 };
 
