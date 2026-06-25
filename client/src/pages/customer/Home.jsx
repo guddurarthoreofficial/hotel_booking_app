@@ -1,11 +1,19 @@
-import { useAuth } from "../../context/AuthContext";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
 
 const Home = () => {
-  const { user } = useAuth();
+  return (
+    <div className="max-w-md mx-auto mt-20 p-6">
+      <Input
+        label="Email"
+        placeholder="Enter your email"
+      />
 
-  console.log(user);
-
-  return <h1>Home Page</h1>;
+      <Button>
+        Test Button
+      </Button>
+    </div>
+  );
 };
 
 export default Home;
