@@ -4,6 +4,9 @@ import Home from "../pages/customer/Home";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import NotFound from "../pages/shared/NotFound";
+import MyBookings from "../pages/customer/MyBookings";
+import ProtectedRoute from "./ProtectedRoute";
+
 
 const AppRoutes = () => {
   return (
@@ -14,6 +17,19 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+
+
+
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute>
+              <MyBookings />
+            </ProtectedRoute>
+          }
+        />
+
+
 
         <Route path="*" element={<NotFound />} />
       </Routes>

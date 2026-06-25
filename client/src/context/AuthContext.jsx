@@ -2,7 +2,6 @@ import {
     createContext,
     useContext,
     useState,
-    useEffect,
 } from "react"; import { loginUser } from "../services/authService";
 
 
@@ -17,9 +16,13 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
+
+    const [token, setToken] = useState(() => getToken());
+
     const [loading, setLoading] = useState(false);
+
     const isAuthenticated = !!token;
+    
     const login = async (formData) => {
         try {
             setLoading(true);
@@ -55,13 +58,7 @@ export const AuthProvider = ({ children }) => {
     };
 
 
-    useEffect(() => {
-        const storedToken = getToken();
 
-        if (storedToken) {
-            setToken(storedToken);
-        }
-    }, []);
 
 
     return (
@@ -84,3 +81,5 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
     return useContext(AuthContext);
 };
+
+

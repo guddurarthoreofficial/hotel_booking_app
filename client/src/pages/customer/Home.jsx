@@ -6,26 +6,24 @@ import Button from "../../components/ui/Button";
 
 const Home = () => {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const { logout } = useAuth();
+    const { logout } = useAuth();
 
+    const {
+      user,
+      token,
+      loading,
+      isAuthenticated
+    } = useAuth();
 
-  const {
-    user,
-    token,
-    loading,
-    isAuthenticated
-  } = useAuth();
-
-  console.log(user);
-  console.log(token);
-  console.log(loading);
-  console.log(isAuthenticated);
+    // console.log(user);
+    // console.log(token);
+    // console.log(loading);
+    // console.log( "guddu"+isAuthenticated);
 
   const handleLogout = () => {
     logout();
-
     navigate("/login");
   };
 
@@ -33,17 +31,8 @@ const Home = () => {
     <AuthLayout title="Hotel Booking">
       <p className="text-center">
         Layout Working
-
-        <Button
-          className="mt-5"
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
-
-
-
-
+        <br />
+        <button onClick={handleLogout} className="m-4  bg-blend-color"> logout </button>
 
       </p>
     </AuthLayout>
