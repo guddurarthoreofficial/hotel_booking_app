@@ -2,8 +2,15 @@ import { useState } from "react";
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
+
+  const navigate = useNavigate();
+
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,10 +23,18 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    const result = await login(formData);
+
+    if (result.success) {
+      toast.success(result.message);
+
+      navigate("/");
+    } else {
+      toast.error(result.message);
+    }
   };
 
   return (
