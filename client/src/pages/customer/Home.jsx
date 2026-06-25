@@ -1,8 +1,14 @@
 import { useAuth } from "../../context/AuthContext";
 import AuthLayout from "../../layouts/AuthLayout";
+import { useNavigate } from "react-router-dom";
+import Button from "../../components/ui/Button";
+
 
 const Home = () => {
 
+  const navigate = useNavigate();
+
+  const { logout } = useAuth();
 
 
   const {
@@ -16,10 +22,26 @@ const Home = () => {
   console.log(token);
   console.log(loading);
   console.log(isAuthenticated);
+
+  const handleLogout = () => {
+    logout();
+
+    navigate("/login");
+  };
+
   return (
     <AuthLayout title="Hotel Booking">
       <p className="text-center">
         Layout Working
+
+        <Button
+          className="mt-5"
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+
+
 
 
 
