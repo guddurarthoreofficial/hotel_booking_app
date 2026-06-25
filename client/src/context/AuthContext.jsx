@@ -1,7 +1,14 @@
-import { createContext, useContext, useState } from "react";
-import { loginUser } from "../services/authService";
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+} from "react"; import { loginUser } from "../services/authService";
+
+
 import {
     saveToken,
+    getToken,
     removeToken,
 } from "../utils/token";
 
@@ -46,6 +53,17 @@ export const AuthProvider = ({ children }) => {
 
         removeToken();
     };
+
+
+    useEffect(() => {
+        const storedToken = getToken();
+
+        if (storedToken) {
+            setToken(storedToken);
+        }
+    }, []);
+
+
     return (
         <AuthContext.Provider
             value={{
