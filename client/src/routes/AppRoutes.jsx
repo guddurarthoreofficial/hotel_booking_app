@@ -7,6 +7,8 @@ import NotFound from "../pages/shared/NotFound";
 import MyBookings from "../pages/customer/MyBookings";
 import ProtectedRoute from "./ProtectedRoute";
 
+import RoomDetails from "../pages/customer/RoomDetails";
+
 
 const AppRoutes = () => {
   return (
@@ -17,6 +19,11 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/rooms/:id"
+          element={<RoomDetails />}
+        />
 
 
 
