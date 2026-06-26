@@ -6,7 +6,7 @@ const MainLayout = ({ children, hero = false }) => {
     <>
       <Navbar />
 
-      <main className={hero ? "" : "pt-20"}>
+      <main className={hero ? "" : "pt-24 min-h-screen"}>
         {children}
       </main>
 

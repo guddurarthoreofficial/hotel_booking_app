@@ -29,7 +29,7 @@ const Navbar = () => {
     <>
       {/* Navbar */}
 
-      <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-black/30 border-b border-white/10">
+      <header className="sticky top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-6">
 
           <div className="h-20 flex justify-between items-center">
@@ -130,21 +130,19 @@ const Navbar = () => {
 
       <div
         onClick={() => setOpen(false)}
-        className={`fixed inset-0 bg-black/50 z-40 transition ${
-          open
+        className={`fixed inset-0 bg-black/50 z-40 transition ${open
             ? "opacity-100 visible"
             : "opacity-0 invisible"
-        }`}
+          }`}
       />
 
       {/* Drawer */}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-72 bg-slate-900 z-50 transition-transform duration-300 ${
-          open
+        className={`fixed top-0 left-0 h-full w-72 bg-slate-900 z-50 transition-transform duration-300 ${open
             ? "translate-x-0"
             : "-translate-x-full"
-        }`}
+          }`}
       >
 
         <div className="flex justify-between items-center p-6 border-b border-gray-700">
