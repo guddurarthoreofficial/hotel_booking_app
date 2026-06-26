@@ -1,18 +1,11 @@
-import Navbar from "../../components/layout/Navbar";
-import AuthLayout from "../../layouts/AuthLayout";
+import MainLayout from "../../layouts/MainLayout";
+import Hero from "../../components/home/Hero";
 
 const Home = () => {
-
   return (
-    <>
-      <Navbar />
-
-      <AuthLayout title="Hotel Booking">
-
-        <p>Layout Working</p>
-
-      </AuthLayout>
-    </>
+    <MainLayout>
+      <Hero />
+    </MainLayout>
   );
 };
 

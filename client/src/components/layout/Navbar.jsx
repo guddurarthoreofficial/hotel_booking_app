@@ -1,94 +1,29 @@
-import { Link, NavLink } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
-
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className="absolute top-0 left-0 w-full z-50">
 
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto flex justify-between items-center py-6 px-6">
 
-          {/* Logo */}
+        <h1 className="text-3xl font-bold text-white">
+          Juhi Petals
+        </h1>
 
-          <Link
-            to="/"
-            className="text-2xl font-bold text-blue-600"
-          >
-            JuhiPetals
-          </Link>
+        <div className="flex gap-8 text-white">
 
-          {/* Menu */}
+          Home
 
-          <div className="flex items-center gap-6">
+          Rooms
 
-            <NavLink
-              to="/"
-              className="hover:text-blue-600"
-            >
-              Home
-            </NavLink>
+          About
 
-            <NavLink
-              to="/rooms"
-              className="hover:text-blue-600"
-            >
-              Rooms
-            </NavLink>
-
-            {
-              isAuthenticated && (
-                <NavLink
-                  to="/my-bookings"
-                  className="hover:text-blue-600"
-                >
-                  My Bookings
-                </NavLink>
-              )
-            }
-
-          </div>
-
-          {/* Right */}
-
-          <div className="flex gap-3">
-
-            {
-              isAuthenticated ? (
-
-                <button
-                  onClick={logout}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                >
-                  Logout
-                </button>
-
-              ) : (
-
-                <>
-                  <Link
-                    to="/login"
-                    className="text-blue-600"
-                  >
-                    Login
-                  </Link>
-
-                  <Link
-                    to="/register"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-                  >
-                    Register
-                  </Link>
-                </>
-
-              )
-            }
-
-          </div>
+          Contact
 
         </div>
+
       </div>
+
     </nav>
   );
 };
