@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
-import { getMyBookings } from "../../services/bookingService";
 import toast from "react-hot-toast";
-import { cancelBooking } from "../../services/bookingService";
+
+import {
+  getMyBookings,
+  cancelBooking,
+  downloadInvoice,
+} from "../../services/bookingService";
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -51,6 +55,44 @@ const MyBookings = () => {
       toast.error(
         error.response?.data?.message || "Unable to cancel booking"
       );
+    }
+  };
+
+
+  const handleDownloadInvoice = async (bookingId) => {
+    try {
+      const response = await downloadInvoice(bookingId);
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data])
+      );
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.setAttribute(
+        "download",
+        `invoice-${bookingId}.pdf`
+      );
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Invoice downloaded successfully");
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to download invoice"
+      );
+
     }
   };
 
@@ -128,16 +170,27 @@ const MyBookings = () => {
                       {booking.paymentStatus}
                     </span>
                   </div>
-                  {
-                    booking.status !== "cancelled" && (
+
+                  <div className="flex flex-wrap gap-4 mt-8">
+
+                    <button
+                      onClick={() => handleDownloadInvoice(booking._id)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition"
+                    >
+                      📄 Download Invoice
+                    </button>
+
+                    {booking.status !== "cancelled" && (
                       <button
                         onClick={() => handleCancelBooking(booking._id)}
-                        className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition"
+                        className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-semibold transition"
                       >
-                        Cancel Booking
+                        ❌ Cancel Booking
                       </button>
-                    )
-                  }
+                    )}
+
+                  </div>
+
 
                 </div>
               </div>
