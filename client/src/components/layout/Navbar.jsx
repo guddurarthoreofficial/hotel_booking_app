@@ -29,7 +29,7 @@ const Navbar = () => {
     <>
       {/* Navbar */}
 
-      <header className="sticky top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-700">
+      <header className="sticky top-0 w-full z-50 bg-black backdrop-blur-md border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-6">
 
           <div className="h-20 flex justify-between items-center">

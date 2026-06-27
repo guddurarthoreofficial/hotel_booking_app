@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 
 import { getRoomById } from "../../services/roomService";
 import RoomGallery from "../../components/rooms/RoomGallery";
+import { useNavigate } from "react-router-dom";
 
 const RoomDetails = () => {
 
@@ -11,6 +12,8 @@ const RoomDetails = () => {
 
     const [room, setRoom] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -100,10 +103,11 @@ const RoomDetails = () => {
 
                         </div>
 
-                        <button className="mt-10 bg-amber-400 hover:bg-amber-300 px-8 py-4 rounded-xl font-semibold">
-
+                        <button
+                            onClick={() => navigate(`/booking/${room._id}`)}
+                            className="mt-10 bg-amber-400 hover:bg-amber-300 px-8 py-4 rounded-xl font-semibold"
+                        >
                             Book Now
-
                         </button>
 
                     </div>

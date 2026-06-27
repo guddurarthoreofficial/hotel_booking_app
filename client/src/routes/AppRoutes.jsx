@@ -8,6 +8,7 @@ import MyBookings from "../pages/customer/MyBookings";
 import ProtectedRoute from "./ProtectedRoute";
 
 import RoomDetails from "../pages/customer/RoomDetails";
+import Booking from "../pages/customer/Booking";
 
 
 const AppRoutes = () => {
@@ -32,6 +33,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <MyBookings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/booking/:roomId"
+          element={
+            <ProtectedRoute>
+              <Booking />
             </ProtectedRoute>
           }
         />
