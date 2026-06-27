@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import { getMyBookings } from "../../services/bookingService";
+import toast from "react-hot-toast";
+import { cancelBooking } from "../../services/bookingService";
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -30,6 +32,27 @@ const MyBookings = () => {
       </MainLayout>
     );
   }
+
+
+  const handleCancelBooking = async (bookingId) => {
+    const confirm = window.confirm(
+      "Are you sure you want to cancel this booking?"
+    );
+
+    if (!confirm) return;
+
+    try {
+      await cancelBooking(bookingId);
+
+      toast.success("Booking cancelled successfully");
+
+      fetchBookings();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Unable to cancel booking"
+      );
+    }
+  };
 
   return (
     <MainLayout>
@@ -105,6 +128,16 @@ const MyBookings = () => {
                       {booking.paymentStatus}
                     </span>
                   </div>
+                  {
+                    booking.status !== "cancelled" && (
+                      <button
+                        onClick={() => handleCancelBooking(booking._id)}
+                        className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition"
+                      >
+                        Cancel Booking
+                      </button>
+                    )
+                  }
 
                 </div>
               </div>
