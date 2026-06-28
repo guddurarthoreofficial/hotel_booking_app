@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+
 import {
   FaBars,
   FaTimes,
@@ -11,12 +12,15 @@ import {
   FaCalendarCheck,
   FaSignInAlt,
   FaSignOutAlt,
+  FaUserCircle,
+  FaChevronDown,
 } from "react-icons/fa";
 
 import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
+  const [userMenu, setUserMenu] = useState(false);
 
   const [open, setOpen] = useState(false);
 
@@ -90,24 +94,88 @@ const Navbar = () => {
               )}
             </nav>
 
+
+
             {/* Right */}
 
-            <div className="hidden lg:block">
+            <div className="hidden lg:block relative">
 
               {isAuthenticated ? (
-                <button
-                  onClick={logout}
-                  className="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg text-white transition"
-                >
-                  Logout
-                </button>
+
+                <>
+
+                  <button
+                    onClick={() => setUserMenu(!userMenu)}
+                    className="flex items-center gap-3 bg-white/10 hover:bg-white/20 text-white px-5 py-3 rounded-xl transition"
+                  >
+
+                    <FaUserCircle className="text-2xl text-amber-400" />
+
+                    <span>My Account</span>
+
+                    <FaChevronDown
+                      className={`duration-300 ${userMenu ? "rotate-180" : ""
+                        }`}
+                    />
+
+                  </button>
+
+                  {
+                    userMenu && (
+
+                      <div className="absolute right-0 mt-4 w-60 bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+                        <NavLink
+                          to="/profile"
+                          onClick={() => setUserMenu(false)}
+                          className="flex items-center gap-3 px-6 py-4 hover:bg-gray-100"
+                        >
+                          <FaUserCircle />
+
+                          My Profile
+
+                        </NavLink>
+
+                        <NavLink
+                          to="/my-bookings"
+                          onClick={() => setUserMenu(false)}
+                          className="flex items-center gap-3 px-6 py-4 hover:bg-gray-100"
+                        >
+                          <FaCalendarCheck />
+
+                          My Bookings
+
+                        </NavLink>
+
+                        <button
+                          onClick={() => {
+                            logout();
+                            setUserMenu(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-6 py-4 text-red-600 hover:bg-red-50"
+                        >
+                          <FaSignOutAlt />
+
+                          Logout
+
+                        </button>
+
+                      </div>
+
+                    )
+                  }
+
+                </>
+
               ) : (
+
                 <NavLink
                   to="/login"
                   className="bg-amber-400 hover:bg-amber-300 px-6 py-3 rounded-lg text-black font-semibold transition"
                 >
                   Login
                 </NavLink>
+
               )}
 
             </div>
@@ -131,8 +199,8 @@ const Navbar = () => {
       <div
         onClick={() => setOpen(false)}
         className={`fixed inset-0 bg-black/50 z-40 transition ${open
-            ? "opacity-100 visible"
-            : "opacity-0 invisible"
+          ? "opacity-100 visible"
+          : "opacity-0 invisible"
           }`}
       />
 
@@ -140,8 +208,8 @@ const Navbar = () => {
 
       <aside
         className={`fixed top-0 left-0 h-full w-72 bg-slate-900 z-50 transition-transform duration-300 ${open
-            ? "translate-x-0"
-            : "-translate-x-full"
+          ? "translate-x-0"
+          : "-translate-x-full"
           }`}
       >
 
@@ -216,6 +284,21 @@ const Navbar = () => {
               My Bookings
             </NavLink>
           )}
+
+          {
+            isAuthenticated && (
+              <NavLink
+                to="/profile"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+              >
+                <FaUserCircle />
+
+                My Profile
+
+              </NavLink>
+            )
+          }
 
           <div className="mt-6 px-6">
 

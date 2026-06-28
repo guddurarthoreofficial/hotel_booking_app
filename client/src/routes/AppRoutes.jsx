@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import RoomDetails from "../pages/customer/RoomDetails";
 import Booking from "../pages/customer/Booking";
+import Profile from "../pages/customer/Profile";
 
 
 const AppRoutes = () => {
@@ -42,6 +43,16 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Booking />
+            </ProtectedRoute>
+          }
+        />
+
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
