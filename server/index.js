@@ -12,6 +12,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
 const emailRoutes = require("./routes/emailRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 
 
@@ -33,6 +34,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/emails", emailRoutes);
+app.use("/api/users", userRoutes);
 
 
 // mongoose
