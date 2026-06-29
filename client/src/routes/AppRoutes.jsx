@@ -11,6 +11,8 @@ import RoomDetails from "../pages/customer/RoomDetails";
 import Booking from "../pages/customer/Booking";
 import Profile from "../pages/customer/Profile";
 import Rooms from "../pages/customer/Rooms";
+import About from "../pages/customer/About";
+import Contact from "../pages/customer/Contact";
 
 
 const AppRoutes = () => {
@@ -22,6 +24,10 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+
+        <Route path="/about" element={<About />} />
+
+        <Route path="/contact" element={<Contact/>} />
 
         <Route
           path="/rooms/:id"
