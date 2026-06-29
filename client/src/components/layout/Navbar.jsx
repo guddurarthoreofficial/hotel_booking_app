@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-
 import {
   FaBars,
   FaTimes,
@@ -11,33 +10,55 @@ import {
   FaPhoneAlt,
   FaCalendarCheck,
   FaSignInAlt,
-  FaSignOutAlt,
   FaUserCircle,
-  FaChevronDown,
+  FaSignOutAlt,
 } from "react-icons/fa";
 
 import { useAuth } from "../../context/AuthContext";
+import UserMenu from "../common/navbar/UserMenu";
+import NotificationBell from "../common/navbar/NotificationBell";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const [userMenu, setUserMenu] = useState(false);
-
+  const { user, isAuthenticated, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+
   const navClass = ({ isActive }) =>
-    isActive
-      ? "text-amber-400 font-semibold"
-      : "text-white hover:text-amber-400 transition";
+    `relative pb-1 font-medium transition-all duration-300
+   ${isActive
+      ? "text-amber-400 after:absolute after:left-0 after:-bottom-1 after:w-full after:h-[2px] after:bg-amber-400"
+      : "text-white hover:text-amber-400 after:absolute after:left-0 after:-bottom-1 after:w-0 hover:after:w-full after:h-[2px] after:bg-amber-400 after:transition-all after:duration-300"
+    }`;
 
   return (
     <>
       {/* Navbar */}
 
-      <header className="sticky top-0 w-full z-50 bg-black backdrop-blur-md border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-6">
-
-          <div className="h-20 flex justify-between items-center">
-
+      <header
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled
+          ? "bg-slate-950/60 backdrop-blur-2xl shadow-2xl border-b border-white/10"
+          : "bg-slate-950"
+          }`}
+      >
+        <div
+          className={`max-w-7xl mx-auto px-6 transition-all duration-500 ${scrolled ? "py-1" : "py-3"
+            }`}
+        >
+          <div className="flex justify-between items-center h-16">
             {/* Logo */}
 
             <NavLink
@@ -84,98 +105,35 @@ const Navbar = () => {
                 Contact
               </NavLink>
 
-              {isAuthenticated && (
+              {/* {isAuthenticated && (
                 <NavLink
                   className={navClass}
                   to="/my-bookings"
                 >
                   My Bookings
                 </NavLink>
-              )}
+              )} */}
             </nav>
 
 
 
             {/* Right */}
 
-            <div className="hidden lg:block relative">
+            <div className="hidden lg:flex items-center gap-5">
 
               {isAuthenticated ? (
-
                 <>
+                  <NotificationBell />
 
-                  <button
-                    onClick={() => setUserMenu(!userMenu)}
-                    className="flex items-center gap-3 bg-white/10 hover:bg-white/20 text-white px-5 py-3 rounded-xl transition"
-                  >
-
-                    <FaUserCircle className="text-2xl text-amber-400" />
-
-                    <span>My Account</span>
-
-                    <FaChevronDown
-                      className={`duration-300 ${userMenu ? "rotate-180" : ""
-                        }`}
-                    />
-
-                  </button>
-
-                  {
-                    userMenu && (
-
-                      <div className="absolute right-0 mt-4 w-60 bg-white rounded-2xl shadow-2xl overflow-hidden">
-
-                        <NavLink
-                          to="/profile"
-                          onClick={() => setUserMenu(false)}
-                          className="flex items-center gap-3 px-6 py-4 hover:bg-gray-100"
-                        >
-                          <FaUserCircle />
-
-                          My Profile
-
-                        </NavLink>
-
-                        <NavLink
-                          to="/my-bookings"
-                          onClick={() => setUserMenu(false)}
-                          className="flex items-center gap-3 px-6 py-4 hover:bg-gray-100"
-                        >
-                          <FaCalendarCheck />
-
-                          My Bookings
-
-                        </NavLink>
-
-                        <button
-                          onClick={() => {
-                            logout();
-                            setUserMenu(false);
-                          }}
-                          className="w-full flex items-center gap-3 px-6 py-4 text-red-600 hover:bg-red-50"
-                        >
-                          <FaSignOutAlt />
-
-                          Logout
-
-                        </button>
-
-                      </div>
-
-                    )
-                  }
-
+                  <UserMenu />
                 </>
-
               ) : (
-
                 <NavLink
                   to="/login"
                   className="bg-amber-400 hover:bg-amber-300 px-6 py-3 rounded-lg text-black font-semibold transition"
                 >
                   Login
                 </NavLink>
-
               )}
 
             </div>
@@ -207,41 +165,91 @@ const Navbar = () => {
       {/* Drawer */}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-72 bg-slate-900 z-50 transition-transform duration-300 ${open
+        className={`fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-slate-950 to-slate-900 z-50 transition-transform duration-300 ${open
           ? "translate-x-0"
           : "-translate-x-full"
           }`}
       >
 
-        <div className="flex justify-between items-center p-6 border-b border-gray-700">
+        <div className="p-6 border-b border-slate-700">
 
-          <div>
+          {isAuthenticated ? (
 
-            <h2 className="text-white font-bold text-xl">
-              Juhi Petals
-            </h2>
+            <>
 
-            <p className="text-gray-400 text-sm">
-              Luxury City Hotel
-            </p>
+              <div className="flex items-center gap-4">
 
-          </div>
+                <div className="h-16 w-16 rounded-full bg-amber-400 text-black flex items-center justify-center text-2xl font-bold">
+
+                  {user?.name
+                    ?.split(" ")
+                    .map((item) => item[0])
+                    .join("")
+                    .toUpperCase()}
+
+                </div>
+
+                <div>
+
+                  <h2 className="text-white font-bold text-lg">
+
+                    {user?.name}
+
+                  </h2>
+
+                  <p className="text-slate-400 capitalize">
+
+                    {user?.role}
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            </>
+
+          ) : (
+
+            <>
+
+              <h2 className="text-white font-bold text-xl">
+
+                Juhi Petals
+
+              </h2>
+
+              <p className="text-slate-400">
+
+                Luxury Hotel
+
+              </p>
+
+            </>
+
+          )}
 
           <button
             onClick={() => setOpen(false)}
-            className="text-white text-2xl"
+            className="absolute top-6 right-6 text-white text-2xl"
           >
             <FaTimes />
           </button>
 
         </div>
 
-        <nav className="flex flex-col mt-6">
+        <nav className="flex flex-col mt-5 gap-2">
 
           <NavLink
             to="/"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+            className={({ isActive }) =>
+              `flex items-center gap-4 px-6 py-4 mx-3 rounded-xl transition-all duration-300
+  ${isActive
+                ? "bg-amber-400 text-black font-semibold"
+                : "text-white hover:bg-slate-800"
+              }`
+            }
           >
             <FaHome />
             Home
@@ -250,7 +258,13 @@ const Navbar = () => {
           <NavLink
             to="/rooms"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+            className={({ isActive }) =>
+              `flex items-center gap-4 px-6 py-4 mx-3 rounded-xl transition-all duration-300
+  ${isActive
+                ? "bg-amber-400 text-black font-semibold"
+                : "text-white hover:bg-slate-800"
+              }`
+            }
           >
             <FaBed />
             Rooms
@@ -259,7 +273,13 @@ const Navbar = () => {
           <NavLink
             to="/about"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+            className={({ isActive }) =>
+              `flex items-center gap-4 px-6 py-4 mx-3 rounded-xl transition-all duration-300
+  ${isActive
+                ? "bg-amber-400 text-black font-semibold"
+                : "text-white hover:bg-slate-800"
+              }`
+            }
           >
             <FaInfoCircle />
             About
@@ -268,7 +288,13 @@ const Navbar = () => {
           <NavLink
             to="/contact"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+            className={({ isActive }) =>
+              `flex items-center gap-4 px-6 py-4 mx-3 rounded-xl transition-all duration-300
+  ${isActive
+                ? "bg-amber-400 text-black font-semibold"
+                : "text-white hover:bg-slate-800"
+              }`
+            }
           >
             <FaPhoneAlt />
             Contact
@@ -278,7 +304,13 @@ const Navbar = () => {
             <NavLink
               to="/my-bookings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+              className={({ isActive }) =>
+                `flex items-center gap-4 px-6 py-4 mx-3 rounded-xl transition-all duration-300
+  ${isActive
+                  ? "bg-amber-400 text-black font-semibold"
+                  : "text-white hover:bg-slate-800"
+                }`
+              }
             >
               <FaCalendarCheck />
               My Bookings
@@ -290,7 +322,13 @@ const Navbar = () => {
               <NavLink
                 to="/profile"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-4 px-6 py-4 text-white hover:bg-slate-800"
+                className={({ isActive }) =>
+                  `flex items-center gap-4 px-6 py-4 mx-3 rounded-xl transition-all duration-300
+  ${isActive
+                    ? "bg-amber-400 text-black font-semibold"
+                    : "text-white hover:bg-slate-800"
+                  }`
+                }
               >
                 <FaUserCircle />
 
@@ -304,8 +342,11 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <button
-                onClick={logout}
-                className="w-full bg-red-500 hover:bg-red-600 rounded-lg py-3 text-white flex justify-center items-center gap-2"
+                onClick={() => {
+                  logout();
+                  setOpen(false);
+                }}
+                className="w-full rounded-xl bg-red-500hover:bg-red-600 transition py-4 font-semibold text-white flex justify-center items-center gap-3 "
               >
                 <FaSignOutAlt />
                 Logout
@@ -320,6 +361,26 @@ const Navbar = () => {
                 Login
               </NavLink>
             )}
+
+          </div>
+
+          <div className="mt-auto px-6 py-8">
+
+            <div className="border-t border-slate-700 pt-6">
+
+              <p className="text-center text-slate-500 text-sm">
+
+                © 2026
+
+              </p>
+
+              <p className="text-center text-amber-400 font-semibold mt-2">
+
+                Juhi Petals Hotel
+
+              </p>
+
+            </div>
 
           </div>
 
