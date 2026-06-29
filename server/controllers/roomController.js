@@ -24,27 +24,49 @@ const getRooms = async (req, res) => {
 
     const query = {};
 
-    if (req.query.roomType) {
-      query.roomType = req.query.roomType;
+    let sortOption = { createdAt: -1 };
+    const { roomType, status, search, minPrice, maxPrice, sort } = req.query;
+
+    if (roomType) {
+      query.roomType = roomType;
+    }
+    if (status) {
+      query.status = status;
+    }
+    if (search) {
+      query.roomNumber = { $regex: search, $options: "i" };
     }
 
-    if (req.query.status) {
-      query.status = req.query.status;
+    if (minPrice || maxPrice) {
+      query.pricePerNight = {};
+      if (minPrice) {
+        query.pricePerNight.$gte = Number(minPrice);
+      }
+      if (maxPrice) {
+        query.pricePerNight.$lte = Number(maxPrice);
+      }
     }
 
-    if (req.query.search) {
-      query.roomNumber = {
-        $regex: req.query.search,
-        $options: "i",
-      };
+    switch (sort) {
+      case "price_asc":
+        sortOption = { pricePerNight: 1 };
+        break;
+      case "price_desc":
+        sortOption = { pricePerNight: -1 };
+        break;
+      case "oldest":
+        sortOption = { createdAt: 1 };
+        break;
+      default:
+        sortOption = { createdAt: -1 };
     }
 
     const totalRooms = await Room.countDocuments(query);
 
     const rooms = await Room.find(query)
+      .sort(sortOption)
       .skip((page - 1) * limit)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+      .limit(limit);
 
     res.status(200).json({
       success: true,
@@ -135,7 +157,6 @@ const deleteRoom = async (req, res) => {
   }
 };
 
-
 const uploadRoomImages = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
@@ -159,7 +180,7 @@ const uploadRoomImages = async (req, res) => {
             (error, result) => {
               if (error) reject(error);
               else resolve(result);
-            }
+            },
           )
           .end(file.buffer);
       });
@@ -186,7 +207,6 @@ const uploadRoomImages = async (req, res) => {
   }
 };
 
-
 const deleteRoomImage = async (req, res) => {
   try {
     const { roomId } = req.params;
@@ -203,9 +223,7 @@ const deleteRoomImage = async (req, res) => {
 
     await cloudinary.uploader.destroy(public_id);
 
-    room.images = room.images.filter(
-      (img) => img.public_id !== public_id
-    );
+    room.images = room.images.filter((img) => img.public_id !== public_id);
 
     await room.save();
 
@@ -221,7 +239,6 @@ const deleteRoomImage = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   createRoom,

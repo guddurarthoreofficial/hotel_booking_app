@@ -20,11 +20,13 @@ const ProfileCard = ({
 
             {/* Header */}
 
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-36 relative">
+            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800 h-52 relative">
 
-                <div className="absolute left-10 top-20">
+                <div className="absolute inset-0 bg-black/20"></div>
 
-                    <div className="h-28 w-28 rounded-full bg-white shadow-xl flex items-center justify-center text-4xl font-bold text-blue-600 border-4 border-white">
+                <div className="absolute left-10 bottom-0 translate-y-1/2">
+
+                    <div className="h-36 w-36 rounded-full bg-white shadow-2xl border-[6px] border-white flex items-center justify-center text-5xl font-bold text-blue-700">
 
                         {initials}
 
@@ -36,21 +38,30 @@ const ProfileCard = ({
 
             {/* Body */}
 
-            <div className="pt-20 px-10 pb-10">
+            <div className="pt-24 px-10 pb-10">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
 
-                <h2 className="text-3xl font-bold">
+                    <div>
 
-                    {user.name}
+                        <h2 className="text-4xl font-bold text-slate-800">
+                            {user.name}
+                        </h2>
 
-                </h2>
+                        <p className="text-gray-500 mt-2">
+                            {user.email}
+                        </p>
 
-                <p className="text-gray-500 capitalize">
+                    </div>
 
-                    {user.role}
+                    <span className="mt-5 lg:mt-0 inline-flex bg-green-100 text-green-700 px-5 py-2 rounded-full font-semibold capitalize">
 
-                </p>
+                        {user.role}
 
-                <div className="grid md:grid-cols-2 gap-8 mt-10">
+                    </span>
+
+                </div>
+
+                <div className="grid lg:grid-cols-2 gap-6 mt-12">
 
                     <div>
 
@@ -64,18 +75,17 @@ const ProfileCard = ({
 
                     </div>
 
-                    <div>
+                    <div className="bg-gray-50 rounded-2xl p-6">
 
-                        <label className="text-gray-500 text-sm">
+                        <label className="text-sm text-gray-500">
                             Phone
                         </label>
 
-                        <p className="font-semibold mt-1">
+                        <p className="font-semibold mt-2 text-lg">
                             {user.phone}
                         </p>
 
                     </div>
-
                     <div>
 
                         <label className="text-gray-500 text-sm">
@@ -102,7 +112,7 @@ const ProfileCard = ({
 
                 </div>
 
-                <div className="flex flex-wrap gap-4 mt-10">
+                <div className="flex flex-wrap gap-5 mt-12 border-t pt-8">
 
                     <button
                         onClick={() => setOpenEdit(true)}

@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import RoomDetails from "../pages/customer/RoomDetails";
 import Booking from "../pages/customer/Booking";
 import Profile from "../pages/customer/Profile";
+import Rooms from "../pages/customer/Rooms";
 
 
 const AppRoutes = () => {
@@ -26,6 +27,8 @@ const AppRoutes = () => {
           path="/rooms/:id"
           element={<RoomDetails />}
         />
+
+        <Route path="/rooms" element={<Rooms />} />
 
 
 
