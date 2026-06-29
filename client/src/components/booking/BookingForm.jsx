@@ -3,11 +3,22 @@ import BookingSummary from "./BookingSummary";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { createBooking } from "../../services/bookingService";
+import {
+  createPaymentOrder,
+  verifyPayment,
+} from "../../services/paymentService";
+
+
+import { useAuth } from "../../context/AuthContext";
+import loadRazorpay from "../../utils/loadRazorpay";
 
 const BookingForm = ({ room }) => {
 
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     checkInDate: "",
@@ -38,23 +49,92 @@ const BookingForm = ({ room }) => {
         paymentMethod: formData.paymentMethod,
       };
 
-      const data = await createBooking(bookingData);
+      // Step 1: Create Booking
+      const bookingRes = await createBooking(bookingData);
 
-      toast.success("Booking Created Successfully 🎉");
+      const booking = bookingRes.booking;
 
-      navigate("/my-bookings");
+      // Cash Payment
+      if (formData.paymentMethod === "cash") {
+        toast.success("Booking Created Successfully 🎉");
+        navigate("/my-bookings");
+        return;
+      }
+
+      // Online Payment
+      const razorpayLoaded = await loadRazorpay();
+
+      if (!razorpayLoaded) {
+        toast.error("Unable to load Razorpay");
+        return;
+      }
+
+      // Step 2: Create Razorpay Order
+      const orderRes = await createPaymentOrder(booking._id);
+
+      const order = orderRes.order;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+        amount: order.amount,
+
+        currency: order.currency,
+
+        name: "Juhi Petals Hotel",
+
+        description: "Room Booking Payment",
+
+        order_id: order.id,
+
+        handler: async function (response) {
+          try {
+            await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              bookingId: booking._id,
+            });
+
+            toast.success("Payment Successful 🎉");
+
+            navigate("/my-bookings");
+
+          } catch (error) {
+
+            toast.error("Payment Verification Failed");
+
+          }
+        },
+
+          prefill: {
+          name: user?.name || "",
+          email: user?.email || "",
+          contact: user?.phone || "",
+        },
+
+        theme: {
+          color: "#f59e0b",
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+
+      paymentObject.open();
 
     } catch (error) {
 
       toast.error(
-        error.response?.data?.message ||
-        "Booking Failed"
+        error.response?.data?.message || "Booking Failed"
       );
 
     } finally {
+
       setLoading(false);
+
     }
   };
+
 
   return (
     <div className="grid lg:grid-cols-5 gap-12">

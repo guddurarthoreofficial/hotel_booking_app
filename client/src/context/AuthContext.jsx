@@ -4,6 +4,8 @@ import {
     useState,
 } from "react"; import { loginUser } from "../services/authService";
 
+import { useEffect } from "react";
+import { getProfile } from "../services/userService";
 
 import {
     saveToken,
@@ -22,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
 
     const isAuthenticated = !!token;
-    
+
     const login = async (formData) => {
         try {
             setLoading(true);
@@ -49,6 +51,28 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
+
+    const fetchProfile = async () => {
+        try {
+
+            if (!token) return;
+
+            const data = await getProfile();
+
+            setUser(data.user);
+
+        } catch (error) {
+
+            console.log(error);
+
+            logout();
+
+        }
+    };
+
+    useEffect(() => {
+        fetchProfile();
+    }, [token]);
 
     const logout = () => {
         setUser(null);

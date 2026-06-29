@@ -47,7 +47,7 @@ const Hero = () => {
             </Link>
 
             <Link
-              to="/login"
+              to="/rooms"
               className="border border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-black duration-300"
             >
               Book Now
