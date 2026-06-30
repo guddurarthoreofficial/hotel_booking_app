@@ -2,7 +2,12 @@ import {
     createContext,
     useContext,
     useState,
-} from "react"; import { loginUser } from "../services/authService";
+} from "react";
+
+import {
+    loginUser,
+    registerUser,
+} from "../services/authService";
 
 import { useEffect } from "react";
 import { getProfile } from "../services/userService";
@@ -52,6 +57,34 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
+    const register = async (formData) => {
+        try {
+            setLoading(true);
+
+            const data = await registerUser(formData);
+
+            setUser(data.user);
+            setToken(data.token);
+
+            saveToken(data.token);
+
+            return {
+                success: true,
+                message: data.message,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    "Registration Failed",
+            };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchProfile = async () => {
         try {
 
@@ -94,6 +127,7 @@ export const AuthProvider = ({ children }) => {
                 isAuthenticated,
 
                 login,
+                register,
                 logout
             }}
         >

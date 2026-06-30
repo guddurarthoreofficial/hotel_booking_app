@@ -31,7 +31,7 @@ const FooterContact = () => {
 
           <div>
             <p className="text-gray-400">
-              guddur748081@gmail.com
+              guddu748081@gmail.com
             </p>
           </div>
 
