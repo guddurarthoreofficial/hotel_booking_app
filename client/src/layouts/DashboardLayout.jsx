@@ -8,7 +8,7 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-slate-100">
 
       {/* Sidebar */}
 
@@ -19,13 +19,14 @@ const DashboardLayout = () => {
 
       {/* Right Side */}
 
-      <div className="lg:ml-72 flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-72 flex flex-col min-w-0">
 
         <Header
+          sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
 
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-4 md:p-6 lg:p-8">
 
           <Outlet />
 
