@@ -5,28 +5,25 @@ import Sidebar from "../components/dashboard/layout/Sidebar";
 import Header from "../components/dashboard/layout/Header";
 
 const DashboardLayout = () => {
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
 
-      {/* Sidebar */}
+    <div className="min-h-screen bg-slate-100">
 
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
 
-      {/* Right Side */}
-
-      <div className="flex-1 lg:ml-72 flex flex-col min-w-0">
+      <div className="lg:pl-72">
 
         <Header
-          sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <main className="min-h-[calc(100vh-80px)] p-6">
 
           <Outlet />
 
@@ -35,7 +32,9 @@ const DashboardLayout = () => {
       </div>
 
     </div>
+
   );
+
 };
 
 export default DashboardLayout;
