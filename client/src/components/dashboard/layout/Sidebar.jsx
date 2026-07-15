@@ -10,11 +10,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       <div
         onClick={() => setSidebarOpen(false)}
         className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition
-        ${
-          sidebarOpen
+        ${sidebarOpen
             ? "opacity-100 visible"
             : "opacity-0 invisible"
-        }`}
+          }`}
       />
 
       <aside
@@ -37,10 +36,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           transition-transform
           duration-300
 
-          ${
-            sidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full lg:translate-x-0"
+          ${sidebarOpen
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0"
           }
         `}
       >
