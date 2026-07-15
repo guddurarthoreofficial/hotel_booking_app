@@ -1,23 +1,40 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({
+    children,
+    allowedRoles = [],
+}) => {
+
     const {
         user,
-        token,
         loading,
-        isAuthenticated
+        isAuthenticated,
     } = useAuth();
 
-    // console.log(user);
-    console.log("Token : "+token);
-    // console.log(loading);
-    console.log("isAuthencated : " + isAuthenticated);
 
+    console.log(user);
+    console.log(isAuthenticated);
 
+    if (loading) {
+        return (
+            <div className="h-screen flex items-center justify-center">
+
+                Loading...
+
+            </div>
+        );
+    }
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
+    }
+
+    if (
+        allowedRoles.length > 0 &&
+        !allowedRoles.includes(user?.role)
+    ) {
+        return <Navigate to="/" replace />;
     }
 
     return children;

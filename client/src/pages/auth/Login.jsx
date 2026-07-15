@@ -34,7 +34,23 @@ const Login = () => {
     if (result.success) {
       toast.success(result.message);
 
-      navigate("/");
+      // navigate("/");
+      switch (result.user.role) {
+        case "admin":
+          navigate("/admin");
+          break;
+
+        case "manager":
+          navigate("/manager");
+          break;
+
+        case "receptionist":
+          navigate("/receptionist");
+          break;
+
+        default:
+          navigate("/");
+      }
     } else {
       toast.error(result.message);
     }

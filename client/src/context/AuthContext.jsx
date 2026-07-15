@@ -26,8 +26,7 @@ export const AuthProvider = ({ children }) => {
 
     const [token, setToken] = useState(() => getToken());
 
-    const [loading, setLoading] = useState(false);
-
+    const [loading, setLoading] = useState(true);
     const isAuthenticated = !!token;
 
     const login = async (formData) => {
@@ -44,6 +43,7 @@ export const AuthProvider = ({ children }) => {
             return {
                 success: true,
                 message: data.message,
+                user: data.user,
             };
         } catch (error) {
             return {
@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }) => {
             return {
                 success: true,
                 message: data.message,
+                user: data.user,
             };
         } catch (error) {
             return {
@@ -85,10 +86,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
     const fetchProfile = async () => {
         try {
 
-            if (!token) return;
+            if (!token) {
+                setLoading(false);
+                return;
+            }
 
             const data = await getProfile();
 
@@ -100,11 +105,25 @@ export const AuthProvider = ({ children }) => {
 
             logout();
 
+        } finally {
+
+            setLoading(false);
+
         }
     };
 
     useEffect(() => {
-        fetchProfile();
+
+        if (token) {
+
+            fetchProfile();
+
+        } else {
+
+            setLoading(false);
+
+        }
+
     }, [token]);
 
     const logout = () => {
@@ -122,13 +141,19 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
+                role: user?.role,
+
                 token,
+
                 loading,
+
                 isAuthenticated,
 
                 login,
+
                 register,
-                logout
+
+                logout,
             }}
         >
             {children}

@@ -15,6 +15,20 @@ import About from "../pages/customer/About";
 import Contact from "../pages/customer/Contact";
 
 
+
+import DashboardLayout from "../layouts/DashboardLayout";
+
+import Dashboard from "../pages/admin/Dashboard";
+import RoomsAdmin from "../pages/admin/Rooms";
+import BookingsAdmin from "../pages/admin/Bookings";
+import UsersAdmin from "../pages/admin/Users";
+import Staff from "../pages/admin/Staff";
+import Payments from "../pages/admin/Payments";
+import Reports from "../pages/admin/Reports";
+import Settings from "../pages/admin/Settings";
+
+
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -27,7 +41,7 @@ const AppRoutes = () => {
 
         <Route path="/about" element={<About />} />
 
-        <Route path="/contact" element={<Contact/>} />
+        <Route path="/contact" element={<Contact />} />
 
         <Route
           path="/rooms/:id"
@@ -67,9 +81,63 @@ const AppRoutes = () => {
         />
 
 
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            index
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="rooms"
+            element={<RoomsAdmin />}
+          />
+
+          <Route
+            path="bookings"
+            element={<BookingsAdmin />}
+          />
+
+          <Route
+            path="users"
+            element={<UsersAdmin />}
+          />
+
+          <Route
+            path="staff"
+            element={<Staff />}
+          />
+
+          <Route
+            path="payments"
+            element={<Payments />}
+          />
+
+          <Route
+            path="reports"
+            element={<Reports />}
+          />
+
+          <Route
+            path="settings"
+            element={<Settings />}
+          />
+        </Route>
+
 
         <Route path="*" element={<NotFound />} />
+
+
+
+
       </Routes>
+
     </BrowserRouter>
   );
 };
