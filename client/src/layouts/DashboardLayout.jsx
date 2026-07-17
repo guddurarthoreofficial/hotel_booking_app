@@ -5,25 +5,29 @@ import Sidebar from "../components/dashboard/layout/Sidebar";
 import Header from "../components/dashboard/layout/Header";
 
 const DashboardLayout = () => {
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
+    <div className="flex min-h-screen bg-slate-100">
 
-    <div className="min-h-screen bg-slate-100">
-
+      {/* Desktop Sidebar */}
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        collapsed={collapsed}
       />
 
-      <div className="lg:pl-72">
+      {/* Right Panel */}
+      <div className="flex flex-1 flex-col overflow-hidden">
 
         <Header
           setSidebarOpen={setSidebarOpen}
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
         />
 
-        <main className="min-h-[calc(100vh-80px)] p-6">
+        <main className="flex-1 overflow-y-auto p-6">
 
           <Outlet />
 
@@ -32,9 +36,7 @@ const DashboardLayout = () => {
       </div>
 
     </div>
-
   );
-
 };
 
 export default DashboardLayout;
