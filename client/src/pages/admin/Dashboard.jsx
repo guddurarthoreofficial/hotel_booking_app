@@ -138,16 +138,21 @@ const Dashboard = () => {
 
         {/* Room Status */}
 
-        <RoomStatus />
+        <RoomStatus
+          availableRooms={stats?.availableRooms}
+          occupiedRooms={stats?.occupiedRooms}
+          maintenanceRooms={stats?.maintenanceRooms}
+          loading={loading}
+        />
       </div>
 
       {/* Recent Bookings */}
 
-        <RecentBookings
-          bookings={recentBookings}
-          loading={loading}
-        />
-      
+      <RecentBookings
+        bookings={recentBookings}
+        loading={loading}
+      />
+
 
       <ActivityTimeline />
       <QuickActions />
