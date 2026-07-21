@@ -4,40 +4,25 @@ import {
   FaMoneyBillWave,
 } from "react-icons/fa";
 
-const bookings = [
-  {
-    id: 1,
-    guest: "Rahul Sharma",
-    email: "rahul@gmail.com",
-    room: "Deluxe Room",
-    roomNo: "205",
-    amount: "₹8,500",
-    checkIn: "Today",
-    payment: "Paid",
-  },
-  {
-    id: 2,
-    guest: "Amit Kumar",
-    email: "amit@gmail.com",
-    room: "Suite Room",
-    roomNo: "302",
-    amount: "₹12,000",
-    checkIn: "Tomorrow",
-    payment: "Pending",
-  },
-  {
-    id: 3,
-    guest: "Neha Singh",
-    email: "neha@gmail.com",
-    room: "Standard Room",
-    roomNo: "104",
-    amount: "₹5,200",
-    checkIn: "Today",
-    payment: "Paid",
-  },
-];
 
-const RecentBookings = () => {
+const RecentBookings = ({ bookings = [], loading }) => {
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-2xl font-bold text-slate-800">Recent Bookings</h2>
+        <p className="mt-6 text-slate-500">Loading...</p>
+      </div>
+    );
+  }
+
+  if (bookings.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-2xl font-bold text-slate-800">Recent Bookings</h2>
+        <p className="mt-6 text-slate-500">No bookings found.</p>
+      </div>
+    );
+  }
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -65,10 +50,12 @@ const RecentBookings = () => {
 
       <div className="space-y-4">
 
+
+
         {bookings.map((booking) => (
 
           <div
-            key={booking.id}
+            key={booking._id}
             className="
               flex
               items-center
@@ -92,7 +79,7 @@ const RecentBookings = () => {
 
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
 
-                {booking.guest.charAt(0)}
+                {booking.guest?.name?.charAt(0)}
 
               </div>
 
@@ -100,13 +87,13 @@ const RecentBookings = () => {
 
                 <h3 className="font-semibold text-slate-800">
 
-                  {booking.guest}
+                  {booking.guest?.name}
 
                 </h3>
 
                 <p className="text-sm text-slate-500">
 
-                  {booking.email}
+                  {booking.guest?.email}
 
                 </p>
 
@@ -120,7 +107,7 @@ const RecentBookings = () => {
 
               <p className="font-semibold text-slate-700">
 
-                {booking.room}
+                {booking.room?.roomType}
 
               </p>
 
@@ -128,7 +115,7 @@ const RecentBookings = () => {
 
                 <FaMapMarkerAlt />
 
-                Room {booking.roomNo}
+                Room {booking.room?.roomNumber}
 
               </p>
 
@@ -140,7 +127,7 @@ const RecentBookings = () => {
 
               <p className="font-semibold text-slate-800">
 
-                {booking.amount}
+                ₹{booking.totalAmount}
 
               </p>
 
@@ -160,7 +147,7 @@ const RecentBookings = () => {
 
               <p className="font-semibold text-slate-700">
 
-                {booking.checkIn}
+                {new Date(booking.checkInDate).toLocaleDateString()}
 
               </p>
 
@@ -171,13 +158,19 @@ const RecentBookings = () => {
             <div>
 
               <span
-                className={`rounded-full px-4 py-2 text-xs font-semibold ${
-                  booking.payment === "Paid"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
+                className={`rounded-full px-4 py-2 text-xs font-semibold ${booking.payment === "Paid"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
+                  }`}
               >
-                {booking.payment}
+                {<span
+                  className={`rounded-full px-4 py-2 text-xs font-semibold ${booking.paymentStatus === "paid"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                    }`}
+                >
+                  {booking.paymentStatus === "paid" ? "Paid" : "Pending"}
+                </span>}
               </span>
 
             </div>

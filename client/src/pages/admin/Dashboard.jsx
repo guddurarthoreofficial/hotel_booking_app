@@ -22,12 +22,15 @@ import QuickActions from "../../components/dashboard/widgets/QuickActions";
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recentBookings, setRecentBookings] = useState([]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const res = await getDashboardStats();
+
         setStats(res.stats);
+        setRecentBookings(res.recentBookings);
       } catch (err) {
         console.error(err);
       } finally {
@@ -65,7 +68,7 @@ const Dashboard = () => {
 
             <p className="text-sm text-slate-300">
               Today's Revenue
-            </p>    
+            </p>
 
             <h2 className="mt-2 text-3xl font-bold text-white">
               ₹{stats?.totalRevenue}
@@ -140,9 +143,11 @@ const Dashboard = () => {
 
       {/* Recent Bookings */}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <RecentBookings />
-      </div>
+        <RecentBookings
+          bookings={recentBookings}
+          loading={loading}
+        />
+      
 
       <ActivityTimeline />
       <QuickActions />
