@@ -10,8 +10,16 @@ const getDashboardStats = async (req, res) => {
 
     const totalBookings = await Booking.countDocuments();
 
-    const occupiedRooms = await Booking.countDocuments({
-      status: "checked_in",
+    const occupiedRooms = await Room.countDocuments({
+      status: "occupied",
+    });
+
+    const availableRooms = await Room.countDocuments({
+      status: "available",
+    });
+
+    const maintenanceRooms = await Room.countDocuments({
+      status: "maintenance",
     });
 
     const revenueData = await Booking.aggregate([
@@ -33,9 +41,13 @@ const getDashboardStats = async (req, res) => {
     ]);
 
     const totalRevenue =
-      revenueData.length > 0
-        ? revenueData[0].totalRevenue
-        : 0;
+      revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
+
+    const recentBookings = await Booking.find()
+      .populate("guest", "name email")
+      .populate("room", "roomNumber roomType")
+      .sort({ createdAt: -1 })
+      .limit(5);
 
     res.status(200).json({
       success: true,
@@ -43,9 +55,12 @@ const getDashboardStats = async (req, res) => {
         totalUsers,
         totalRooms,
         totalBookings,
+        availableRooms,
         occupiedRooms,
+        maintenanceRooms,
         totalRevenue,
       },
+      recentBookings
     });
   } catch (error) {
     res.status(500).json({

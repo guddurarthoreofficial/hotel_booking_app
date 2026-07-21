@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import SidebarHeader from "./SidebarHeader";
 import SidebarMenu from "./SidebarMenu";
 import SidebarFooter from "./SidebarFooter";
@@ -7,45 +9,61 @@ const Sidebar = ({
   setSidebarOpen,
   collapsed,
 }) => {
+
+
+  const [hovered, setHovered] = useState(false);
+  const expanded = !collapsed || hovered;
+
   return (
     <>
       {/* Mobile Overlay */}
       <div
         onClick={() => setSidebarOpen(false)}
-        className={`fixed inset-0 z-40 bg-black/50 transition lg:hidden ${
-          sidebarOpen
-            ? "opacity-100 visible"
-            : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 z-40 bg-black/50 transition lg:hidden ${sidebarOpen
+          ? "opacity-100 visible"
+          : "opacity-0 invisible"
+          }`}
       />
 
       {/* Desktop */}
       <aside
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         className={`
-          hidden
-          lg:flex
+    hidden
+    lg:flex
 
-          flex-col
+    h-screen
+    shrink-0
 
-          bg-slate-950
-          border-r
-          border-slate-800
+    flex-col
 
-          transition-all
-          duration-300
+    bg-slate-950
+    border-r
+    border-slate-800
 
-          ${collapsed ? "w-20" : "w-72"}
-        `}
+    overflow-hidden
+
+    transition-all
+    duration-300
+    ease-in-out
+
+    ${expanded ? "w-72" : "w-20"}
+  `}
       >
 
-        <SidebarHeader collapsed={collapsed} />
+        <SidebarHeader
+          collapsed={!expanded}
+        />
 
         <SidebarMenu
-          collapsed={collapsed}
+          collapsed={!expanded}
           setSidebarOpen={setSidebarOpen}
         />
 
-        <SidebarFooter collapsed={collapsed} />
+        <SidebarFooter
+          collapsed={!expanded}
+        />
 
       </aside>
 
@@ -72,10 +90,9 @@ const Sidebar = ({
 
           lg:hidden
 
-          ${
-            sidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
+          ${sidebarOpen
+            ? "translate-x-0"
+            : "-translate-x-full"
           }
         `}
       >

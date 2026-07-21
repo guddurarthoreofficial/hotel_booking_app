@@ -214,6 +214,14 @@ const checkInBooking = async (req, res) => {
 
     await booking.save();
 
+    const room = await Room.findById(booking.room);
+
+    if (room) {
+      room.status = "occupied";
+      console.log("Room status updated to occupied:", room.status);
+      await room.save();
+    }
+
     res.status(200).json({
       success: true,
       message: "Guest checked in successfully",
@@ -240,6 +248,26 @@ const checkOutBooking = async (req, res) => {
     booking.status = "checked_out";
 
     await booking.save();
+
+    const room = await Room.findById(booking.room);
+
+
+    if (room) {
+      console.log("Old Status:", room.status);
+
+      room.status = "available";
+
+      await room.save();
+
+      console.log("New Status:", room.status);
+    }
+
+  
+
+    // if (room) {
+    //   room.status = "available";
+    //   await room.save();
+    // }
 
     res.status(200).json({
       success: true,

@@ -1,7 +1,7 @@
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../../../context/AuthContext";
 
-const SidebarFooter = () => {
+const SidebarFooter = ({ collapsed }) => {
   const { user, logout } = useAuth();
 
   return (
@@ -9,63 +9,58 @@ const SidebarFooter = () => {
 
       {/* Profile */}
 
-      <div className="flex items-center gap-3 mb-5">
-
-        <div className="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center">
-
+      <div
+        className={`mb-5 flex items-center ${
+          collapsed ? "justify-center" : "gap-3"
+        }`}
+      >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-800">
           <FaUserCircle className="text-2xl text-slate-300" />
-
         </div>
 
-        <div className="min-w-0">
+        {!collapsed && (
+          <div className="min-w-0">
+            <h4 className="truncate font-semibold text-white">
+              {user?.name}
+            </h4>
 
-          <h4 className="text-white font-semibold truncate">
-
-            {user?.name}
-
-          </h4>
-
-          <p className="text-xs text-slate-400 capitalize">
-
-            {user?.role}
-
-          </p>
-
-        </div>
-
+            <p className="text-xs capitalize text-slate-400">
+              {user?.role}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Logout */}
 
       <button
         onClick={logout}
-        className="
+        className={`
           w-full
           flex
           items-center
-          gap-3
           rounded-xl
           px-4
           py-3
           text-red-400
           hover:bg-red-500/10
           transition-all
-        "
+
+          ${collapsed ? "justify-center" : "gap-3"}
+        `}
       >
+        <FaSignOutAlt className="shrink-0" />
 
-        <FaSignOutAlt />
-
-        Logout
-
+        {!collapsed && <span>Logout</span>}
       </button>
 
       {/* Version */}
 
-      <p className="mt-5 text-center text-xs text-slate-500">
-
-        Version 1.0.0
-
-      </p>
+      {!collapsed && (
+        <p className="mt-5 text-center text-xs text-slate-500">
+          Version 1.0.0
+        </p>
+      )}
 
     </div>
   );
