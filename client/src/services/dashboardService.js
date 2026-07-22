@@ -6,9 +6,7 @@ export const getDashboardStats = async () => {
 };
 
 export const getRevenueAnalytics = async (period = "1y") => {
-  const { data } = await axios.get(
-    `/dashboard/revenue?period=${period}`
-  );
+  const { data } = await axios.get(`/dashboard/revenue?period=${period}`);
   return data;
 };
 
@@ -16,4 +14,3 @@ export const getRecentActivities = async () => {
   const { data } = await axios.get("/dashboard/activity");
   return data;
 };
-      
