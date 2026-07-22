@@ -2,7 +2,6 @@ const Booking = require("../models/Booking");
 const Room = require("../models/Room");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
-
 const logActivity = require("../utils/logActivity");
 
 const createBooking = async (req, res) => {
@@ -83,7 +82,7 @@ const createBooking = async (req, res) => {
 
     await logActivity({
       action: "Booking",
-      description: `${req.user.name} created a booking`,
+      description: `${req.user.name} booked Room ${roomExists.roomNumber}`,
       user: req.user._id,
       icon: "booking",
     });
