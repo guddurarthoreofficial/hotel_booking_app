@@ -1,9 +1,17 @@
 const Room = require("../models/Room");
 const cloudinary = require("../config/cloudinary");
+const logActivity = require("../utils/logActivity");
 
 const createRoom = async (req, res) => {
   try {
     const room = await Room.create(req.body);
+
+    await logActivity({
+      action: "Room",
+      description: `Room ${room.roomNumber} added`,
+      user: req.user._id,
+      icon: "room",
+    });
 
     res.status(201).json({
       success: true,

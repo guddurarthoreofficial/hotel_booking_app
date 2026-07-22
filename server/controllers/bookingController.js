@@ -3,6 +3,8 @@ const Room = require("../models/Room");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 
+const logActivity = require("../utils/logActivity");
+
 const createBooking = async (req, res) => {
   try {
     const { room, checkInDate, checkOutDate, totalGuests, paymentMethod } =
@@ -78,6 +80,13 @@ const createBooking = async (req, res) => {
     <p>Thank you for choosing our hotel.</p>
   `,
     );
+
+    await logActivity({
+      action: "Booking",
+      description: `${req.user.name} created a booking`,
+      user: req.user._id,
+      icon: "booking",
+    });
 
     res.status(201).json({
       success: true,
@@ -222,6 +231,13 @@ const checkInBooking = async (req, res) => {
       await room.save();
     }
 
+    await logActivity({
+      action: "Check In",
+      description: `${booking.guest.name} checked in`,
+      user: req.user._id,
+      icon: "checkin",
+    });
+
     res.status(200).json({
       success: true,
       message: "Guest checked in successfully",
@@ -251,23 +267,17 @@ const checkOutBooking = async (req, res) => {
 
     const room = await Room.findById(booking.room);
 
-
     if (room) {
-      console.log("Old Status:", room.status);
-
       room.status = "available";
-
       await room.save();
-
-      console.log("New Status:", room.status);
     }
 
-  
-
-    // if (room) {
-    //   room.status = "available";
-    //   await room.save();
-    // }
+    await logActivity({
+      action: "Check Out",
+      description: `${booking.guest.name} checked out`,
+      user: req.user._id,
+      icon: "checkout",
+    });
 
     res.status(200).json({
       success: true,

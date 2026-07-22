@@ -11,3 +11,9 @@ export const getRevenueAnalytics = async (period = "1y") => {
   );
   return data;
 };
+
+export const getRecentActivities = async () => {
+  const { data } = await axios.get("/dashboard/activity");
+  return data;
+};
+      

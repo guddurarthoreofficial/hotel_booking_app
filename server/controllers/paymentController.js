@@ -3,7 +3,7 @@ const Booking = require("../models/Booking");
 const crypto = require("crypto");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
-
+const logActivity = require("../utils/logActivity");
 
 const createPaymentOrder = async (req, res) => {
   try {
@@ -23,6 +23,13 @@ const createPaymentOrder = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
+
+    await logActivity({
+      action: "Payment",
+      description: `Payment received ₹${booking.totalAmount}`,
+      user: req.user._id,
+      icon: "payment",
+    });
 
     res.status(200).json({
       success: true,

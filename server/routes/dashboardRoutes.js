@@ -3,6 +3,7 @@ const express = require("express");
 const {
   getDashboardStats,
   getRevenueAnalytics,
+  getRecentActivities,
 } = require("../controllers/dashboardController");
 
 const protect = require("../middleware/authMiddleware");
@@ -22,6 +23,13 @@ router.get(
   protect,
   authorize("admin", "manager"),
   getRevenueAnalytics
+);
+
+router.get(
+   "/activity",
+   protect,
+   authorize("admin"),
+   getRecentActivities
 );
 
 module.exports = router;

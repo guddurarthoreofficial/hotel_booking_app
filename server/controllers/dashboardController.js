@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Room = require("../models/Room");
 const Booking = require("../models/Booking");
+const Activity = require("../models/Activity");
 
 const getDashboardStats = async (req, res) => {
   try {
@@ -149,7 +150,31 @@ const getRevenueAnalytics = async (req, res) => {
 };
 
 
+const getRecentActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find()
+      .populate("user", "name")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.json({
+      success: true,
+      activities,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
 module.exports = {
   getDashboardStats,
   getRevenueAnalytics,
+  getRecentActivities
 };
