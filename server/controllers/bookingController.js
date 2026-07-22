@@ -210,7 +210,9 @@ const getBookingById = async (req, res) => {
 
 const checkInBooking = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findById(req.params.id)
+      .populate("guest", "name")
+      .populate("room", "roomNumber");
 
     if (!booking) {
       return res.status(404).json({
@@ -220,20 +222,18 @@ const checkInBooking = async (req, res) => {
     }
 
     booking.status = "checked_in";
-
     await booking.save();
 
-    const room = await Room.findById(booking.room);
+    const room = await Room.findById(booking.room._id);
 
     if (room) {
       room.status = "occupied";
-      console.log("Room status updated to occupied:", room.status);
       await room.save();
     }
 
     await logActivity({
       action: "Check In",
-      description: `${booking.guest.name} checked in`,
+      description: `${booking.guest.name} checked into Room ${booking.room.roomNumber}`,
       user: req.user._id,
       icon: "checkin",
     });
@@ -252,7 +252,9 @@ const checkInBooking = async (req, res) => {
 
 const checkOutBooking = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findById(req.params.id)
+      .populate("guest", "name")
+      .populate("room", "roomNumber");
 
     if (!booking) {
       return res.status(404).json({
@@ -262,10 +264,9 @@ const checkOutBooking = async (req, res) => {
     }
 
     booking.status = "checked_out";
-
     await booking.save();
 
-    const room = await Room.findById(booking.room);
+    const room = await Room.findById(booking.room._id);
 
     if (room) {
       room.status = "available";
@@ -274,7 +275,7 @@ const checkOutBooking = async (req, res) => {
 
     await logActivity({
       action: "Check Out",
-      description: `${booking.guest.name} checked out`,
+      description: `${booking.guest.name} checked out from Room ${booking.room.roomNumber}`,
       user: req.user._id,
       icon: "checkout",
     });
