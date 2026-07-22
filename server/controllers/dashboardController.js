@@ -70,6 +70,86 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const getRevenueAnalytics = async (req, res) => {
+  try {
+    const period = req.query.period || "1y";
+
+    let groupFormat;
+    let startDate = new Date();
+
+    switch (period) {
+      case "1w":
+        startDate.setDate(startDate.getDate() - 6);
+        startDate.setHours(0, 0, 0, 0);
+        groupFormat = "%Y-%m-%d";
+        break;
+
+      case "1m":
+        startDate.setMonth(startDate.getMonth() - 1);
+        startDate.setHours(0, 0, 0, 0);
+        groupFormat = "%Y-%m-%d";
+        break;
+
+      case "5y":
+        startDate.setFullYear(startDate.getFullYear() - 4);
+        startDate.setMonth(0, 1);
+        startDate.setHours(0, 0, 0, 0);
+        groupFormat = "%Y";
+        break;
+
+      case "1y":
+      default:
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        startDate.setHours(0, 0, 0, 0);
+        groupFormat = "%Y-%m";
+        break;
+    }
+
+    const revenue = await Booking.aggregate([
+      {
+        $match: {
+          status: {
+            $in: ["checked_in", "checked_out"],
+          },
+          createdAt: {
+            $gte: startDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: groupFormat,
+              date: "$createdAt",
+            },
+          },
+          amount: {
+            $sum: "$totalAmount",
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      revenue,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   getDashboardStats,
+  getRevenueAnalytics,
 };
