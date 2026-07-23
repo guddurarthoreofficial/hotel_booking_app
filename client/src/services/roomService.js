@@ -12,6 +12,8 @@ export const getRooms = async (params = {}) => {
   }
 };
 
+
+
 export const getRoomById = async (id) => {
   try {
     const response = await api.get(`/rooms/${id}`);
