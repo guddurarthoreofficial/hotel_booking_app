@@ -18,6 +18,17 @@ const router = express.Router();
 
 router.get("/", getRooms);
 
+
+// Future
+
+// router.get("/search", searchRooms);
+// router.get("/available", getAvailableRooms);
+// router.get("/filter", filterRooms);
+
+// router.get("/:id", getRoomById);
+
+router.get("/:id", getRoomById);
+
 router.post(
   "/",
   protect,
@@ -26,7 +37,7 @@ router.post(
 );
 
 
-router.get("/:id", getRoomById);
+
 
 router.put(
   "/:id",
