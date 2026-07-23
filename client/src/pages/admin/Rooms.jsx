@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import RoomHeader from "../../components/admin/rooms/RoomHeader";
 import RoomFilters from "../../components/admin/rooms/RoomFilters";
 import AdminRoomTable from "../../components/admin/rooms/AdminRoomTable";
+import Pagination from "../../components/common/Pagination";
 
 import { getRooms } from "../../services/roomService";
 
@@ -62,6 +63,18 @@ const Rooms = () => {
       <AdminRoomTable
         rooms={rooms}
         loading={loading}
+        totalRooms={pagination.totalRooms}
+      />
+
+      <Pagination
+        page={pagination.page}
+        totalPages={pagination.totalPages}
+        onPageChange={(newPage) =>
+          setFilters((prev) => ({
+            ...prev,
+            page: newPage,
+          }))
+        }
       />
 
     </div>

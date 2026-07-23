@@ -3,10 +3,21 @@ import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 
 const AdminRoomTable = ({
   rooms = [],
-  loading = false
+  loading = false,
+  totalRooms = 0,
 }) => {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div className="flex items-center justify-between border-b px-5 py-4">
+        <h2 className="text-lg font-semibold text-slate-800">
+          Rooms
+        </h2>
+
+        <span className="text-sm text-slate-500">
+          Total: {totalRooms}
+        </span>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead className="bg-slate-100">
@@ -31,7 +42,18 @@ const AdminRoomTable = ({
                   className="py-10 text-center"
                 >
 
-                  Loading Rooms...
+                  <tr>
+                    <td colSpan={6} className="p-6">
+                      <div className="space-y-3">
+                        {[...Array(5)].map((_, index) => (
+                          <div
+                            key={index}
+                            className="h-10 animate-pulse rounded bg-gray-200"
+                          />
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
 
                 </td>
 
