@@ -27,6 +27,9 @@ import Payments from "../pages/admin/Payments";
 import Reports from "../pages/admin/Reports";
 import Settings from "../pages/admin/Settings";
 
+// import RoomDetailsAdmin from "../pages/admin/RoomDetails";
+import EditRoom from "../pages/admin/EditRoom";
+
 
 
 const AppRoutes = () => {
@@ -128,6 +131,18 @@ const AppRoutes = () => {
             path="settings"
             element={<Settings />}
           />
+
+          <Route
+            path="rooms/:id"
+            element={<RoomDetails />}
+          />
+
+          <Route
+            path="rooms/edit/:id"
+            element={<EditRoom />}
+          />
+
+
         </Route>
 
 

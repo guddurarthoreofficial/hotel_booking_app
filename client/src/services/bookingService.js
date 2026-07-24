@@ -27,3 +27,8 @@ export const downloadInvoice = async (bookingId) => {
 
   return response;
 };
+
+export const getRoomById = async (id) => {
+  const { data } = await api.get(`/rooms/${id}`);
+  return data;
+};
