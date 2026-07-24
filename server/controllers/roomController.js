@@ -4,7 +4,33 @@ const logActivity = require("../utils/logActivity");
 
 const createRoom = async (req, res) => {
   try {
-    const room = await Room.create(req.body);
+    const {
+      roomNumber,
+      roomType,
+      pricePerNight,
+      maxGuests,
+      roomSize,
+      floor,
+      bedType,
+      amenities,
+      status,
+      description,
+      isFeatured,
+    } = req.body;
+
+    const room = await Room.create({
+      roomNumber,
+      roomType,
+      pricePerNight,
+      maxGuests,
+      roomSize,
+      floor,
+      bedType,
+      amenities,
+      status,
+      description,
+      isFeatured,
+    });
 
     await logActivity({
       action: "Room",
@@ -116,10 +142,40 @@ const getRoomById = async (req, res) => {
 
 const updateRoom = async (req, res) => {
   try {
-    const room = await Room.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const {
+      roomNumber,
+      roomType,
+      pricePerNight,
+      maxGuests,
+      roomSize,
+      floor,
+      bedType,
+      amenities,
+      status,
+      description,
+      isFeatured,
+    } = req.body;
+
+    const room = await Room.findByIdAndUpdate(
+      req.params.id,
+      {
+        roomNumber,
+        roomType,
+        pricePerNight,
+        maxGuests,
+        roomSize,
+        floor,
+        bedType,
+        amenities,
+        status,
+        description,
+        isFeatured,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
 
     if (!room) {
       return res.status(404).json({
@@ -127,6 +183,13 @@ const updateRoom = async (req, res) => {
         message: "Room not found",
       });
     }
+
+    await logActivity({
+      action: "Room",
+      description: `Room ${room.roomNumber} updated`,
+      user: req.user._id,
+      icon: "edit",
+    });
 
     res.status(200).json({
       success: true,
@@ -152,6 +215,12 @@ const deleteRoom = async (req, res) => {
     }
 
     await room.deleteOne();
+    await logActivity({
+      action: "Room",
+      description: `Room ${room.roomNumber} deleted`,
+      user: req.user._id,
+      icon: "delete",
+    });
 
     res.status(200).json({
       success: true,

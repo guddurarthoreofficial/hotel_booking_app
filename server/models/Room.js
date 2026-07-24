@@ -8,6 +8,7 @@ const roomSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+
     images: [
       {
         public_id: String,
@@ -29,6 +30,23 @@ const roomSchema = new mongoose.Schema(
     maxGuests: {
       type: Number,
       required: true,
+      min: 1,
+    },
+
+    roomSize: {
+      type: Number, // Square Feet
+      default: 0,
+    },
+
+    floor: {
+      type: Number,
+      default: 1,
+    },
+
+    bedType: {
+      type: String,
+      enum: ["single", "double", "queen", "king"],
+      default: "double",
     },
 
     amenities: [
@@ -47,10 +65,15 @@ const roomSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 module.exports = mongoose.model("Room", roomSchema);

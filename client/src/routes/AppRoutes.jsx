@@ -27,7 +27,7 @@ import Payments from "../pages/admin/Payments";
 import Reports from "../pages/admin/Reports";
 import Settings from "../pages/admin/Settings";
 
-// import RoomDetailsAdmin from "../pages/admin/RoomDetails";
+import RoomDetailsAdmin from "../pages/admin/RoomDetails";
 import EditRoom from "../pages/admin/EditRoom";
 
 
@@ -134,7 +134,7 @@ const AppRoutes = () => {
 
           <Route
             path="rooms/:id"
-            element={<RoomDetails />}
+            element={<RoomDetailsAdmin />}
           />
 
           <Route
