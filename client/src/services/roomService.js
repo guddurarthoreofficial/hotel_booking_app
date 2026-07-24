@@ -12,13 +12,20 @@ export const getRooms = async (params = {}) => {
   }
 };
 
-
-
 export const getRoomById = async (id) => {
   try {
     const response = await api.get(`/rooms/${id}`);
 
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteRoom = async (id) => {
+  try {
+    const { data } = await api.delete(`/rooms/${id}`);
+    return data;
   } catch (error) {
     throw error;
   }

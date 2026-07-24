@@ -1,11 +1,19 @@
 import RoomStatusBadge from "./RoomStatusBadge";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
+
+
+
+
 
 const AdminRoomTable = ({
   rooms = [],
   loading = false,
   totalRooms = 0,
+  onDelete,
 }) => {
+  const navigate = useNavigate();
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
@@ -34,31 +42,18 @@ const AdminRoomTable = ({
           <tbody>
 
             {loading && (
-
               <tr>
-
-                <td
-                  colSpan={6}
-                  className="py-10 text-center"
-                >
-
-                  <tr>
-                    <td colSpan={6} className="p-6">
-                      <div className="space-y-3">
-                        {[...Array(5)].map((_, index) => (
-                          <div
-                            key={index}
-                            className="h-10 animate-pulse rounded bg-gray-200"
-                          />
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-
+                <td colSpan={6} className="p-6">
+                  <div className="space-y-3">
+                    {[...Array(5)].map((_, index) => (
+                      <div
+                        key={index}
+                        className="h-10 animate-pulse rounded bg-gray-200"
+                      />
+                    ))}
+                  </div>
                 </td>
-
               </tr>
-
             )}
 
             {!loading && rooms.length === 0 && (
@@ -104,15 +99,20 @@ const AdminRoomTable = ({
 
                 <td className="px-5 py-4">
                   <div className="flex justify-center gap-3">
-                    <button className="text-slate-500 hover:text-blue-600">
+                    <button className="text-slate-500 hover:text-blue-600" onClick={() => navigate(`/admin/rooms/${room._id}`)}
+                    >
                       <FaEye />
                     </button>
 
-                    <button className="text-slate-500 hover:text-green-600">
+                    <button className="text-slate-500 hover:text-green-600" onClick={() => navigate(`/admin/rooms/edit/${room._id}`)}>
                       <FaEdit />
                     </button>
 
-                    <button className="text-slate-500 hover:text-red-600">
+                    <button
+                      onClick={() => onDelete(room)}
+                      className="text-slate-500 hover:text-red-600"
+                      title="Delete Room"
+                    >
                       <FaTrash />
                     </button>
                   </div>
