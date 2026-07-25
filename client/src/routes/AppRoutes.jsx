@@ -29,6 +29,7 @@ import Settings from "../pages/admin/Settings";
 
 import RoomDetailsAdmin from "../pages/admin/RoomDetails";
 import EditRoom from "../pages/admin/EditRoom";
+import AddRoom from "../pages/admin/AddRoom";
 
 
 
@@ -142,6 +143,10 @@ const AppRoutes = () => {
             element={<EditRoom />}
           />
 
+          <Route
+            path="rooms/add"
+            element={<AddRoom/>}
+          />
 
         </Route>
 
