@@ -90,7 +90,7 @@ const AdminRoomTable = ({
                 </td>
 
                 <td className="px-5 py-4">
-                  {room.capacity}
+                  {room.maxGuests}
                 </td>
 
                 <td className="px-5 py-4">
