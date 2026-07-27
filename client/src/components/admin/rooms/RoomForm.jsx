@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 
 import AmenitySelector from "./AmenitySelector";
@@ -18,22 +18,41 @@ const RoomForm = ({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      roomNumber: initialData.roomNumber || "",
-      roomType: initialData.roomType || "standard",
-      pricePerNight: initialData.pricePerNight || "",
-      maxGuests: initialData.maxGuests || 1,
-      roomSize: initialData.roomSize || "",
-      floor: initialData.floor || 1,
-      bedType: initialData.bedType || "double",
-      amenities: initialData.amenities || [],
-      status: initialData.status || "available",
-      description: initialData.description || "",
-      isFeatured: initialData.isFeatured || false,
+      roomNumber: "",
+      roomType: "standard",
+      pricePerNight: "",
+      maxGuests: 1,
+      roomSize: "",
+      floor: 1,
+      bedType: "double",
+      amenities: [],
+      status: "available",
+      description: "",
+      isFeatured: false,
     },
   });
+
+  useEffect(() => {
+    if (!initialData?._id) return;
+
+    reset({
+      roomNumber: initialData.roomNumber,
+      roomType: initialData.roomType,
+      pricePerNight: initialData.pricePerNight,
+      maxGuests: initialData.maxGuests,
+      roomSize: initialData.roomSize,
+      floor: initialData.floor,
+      bedType: initialData.bedType,
+      amenities: initialData.amenities,
+      status: initialData.status,
+      description: initialData.description,
+      isFeatured: initialData.isFeatured,
+    });
+  }, [initialData, reset]);
 
   const submitHandler = (data) => {
     onSubmit(data, images);
@@ -199,11 +218,12 @@ const RoomForm = ({
         )}
       />
 
-      {/* Images */}
       <ImageUploader
         images={images}
         setImages={setImages}
         existingImages={initialData.images || []}
+        roomId={initialData._id}
+        mode={mode}
       />
 
       {/* Buttons */}
@@ -224,8 +244,8 @@ const RoomForm = ({
           {loading
             ? "Saving..."
             : mode === "create"
-            ? "Create Room"
-            : "Update Room"}
+              ? "Create Room"
+              : "Update Room"}
         </button>
       </div>
     </form>

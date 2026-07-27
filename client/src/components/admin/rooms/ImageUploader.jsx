@@ -1,11 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { deleteRoomImage } from "../../../services/roomService";
+import { toast } from "react-toastify";
 
 const ImageUploader = ({
   images = [],
   setImages,
   existingImages = [],
-  onDeleteExisting,
+  roomId,
+  mode = "create",
 }) => {
+  const [existing, setExisting] = useState(existingImages);
+  const [deleting, setDeleting] = useState("");
+
+  useEffect(() => {
+    setExisting(existingImages);
+  }, [existingImages]);
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -17,6 +27,28 @@ const ImageUploader = ({
     setImages((prev) => [...prev, ...selectedImages]);
 
     e.target.value = "";
+  };
+
+  const handleDeleteExisting = async (public_id) => {
+    if (!window.confirm("Delete this image?")) return;
+
+    try {
+      setDeleting(public_id);
+
+      await deleteRoomImage(roomId, public_id);
+
+      setExisting((prev) =>
+        prev.filter((img) => img.public_id !== public_id)
+      );
+
+      toast.success("Image deleted successfully");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Failed to delete image"
+      );
+    } finally {
+      setDeleting("");
+    }
   };
 
   const removeNewImage = (index) => {
@@ -39,10 +71,10 @@ const ImageUploader = ({
         }
       });
     };
-  }, []);
+  }, [images]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <label className="mb-2 block font-medium">
           Room Images
@@ -57,14 +89,15 @@ const ImageUploader = ({
         />
       </div>
 
-      {existingImages.length > 0 && (
+      {/* Existing Images */}
+      {mode === "edit" && existing.length > 0 && (
         <div>
           <h3 className="mb-3 font-semibold">
             Existing Images
           </h3>
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {existingImages.map((image) => (
+            {existing.map((image) => (
               <div
                 key={image.public_id}
                 className="relative overflow-hidden rounded-lg border"
@@ -75,23 +108,25 @@ const ImageUploader = ({
                   className="h-32 w-full object-cover"
                 />
 
-                {onDeleteExisting && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onDeleteExisting(image.public_id)
-                    }
-                    className="absolute right-2 top-2 rounded bg-red-600 px-2 py-1 text-xs text-white"
-                  >
-                    Delete
-                  </button>
-                )}
+                <button
+                  type="button"
+                  disabled={deleting === image.public_id}
+                  onClick={() =>
+                    handleDeleteExisting(image.public_id)
+                  }
+                  className="absolute right-2 top-2 rounded bg-red-600 px-2 py-1 text-xs text-white disabled:opacity-60"
+                >
+                  {deleting === image.public_id
+                    ? "Deleting..."
+                    : "Delete"}
+                </button>
               </div>
             ))}
           </div>
         </div>
       )}
 
+      {/* New Images */}
       {images.length > 0 && (
         <div>
           <h3 className="mb-3 font-semibold">
