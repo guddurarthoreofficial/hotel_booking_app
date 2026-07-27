@@ -20,7 +20,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 
 import Dashboard from "../pages/admin/Dashboard";
 import RoomsAdmin from "../pages/admin/Rooms";
-import BookingsAdmin from "../pages/admin/Bookings";
+import BookingsAdmin from "../pages/admin/BookingList";
 import UsersAdmin from "../pages/admin/Users";
 import Staff from "../pages/admin/Staff";
 import Payments from "../pages/admin/Payments";

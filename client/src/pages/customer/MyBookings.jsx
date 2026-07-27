@@ -124,11 +124,11 @@ const MyBookings = () => {
                 {/* Image */}
                 <img
                   src={
-                    booking.room.images?.length
+                    booking.room?.images?.length
                       ? booking.room.images[0].url
-                      : "https://placehold.co/600x400?text=Juhi+Petals"
+                      : "https://placehold.co/600x400?text=Room+Unavailable"
                   }
-                  alt={booking.room.roomType}
+                  alt={booking.room?.roomType || "Room"}
                   className="h-72 w-full object-cover"
                 />
 
@@ -136,11 +136,14 @@ const MyBookings = () => {
                 <div className="lg:col-span-2 p-8">
 
                   <h2 className="text-3xl font-bold capitalize">
-                    {booking.room.roomType} Room
+                    {booking.room?.roomType
+                      ? `${booking.room.roomType} Room`
+                      : "Room Removed"}
                   </h2>
 
                   <p className="mt-4">
-                    <strong>Room:</strong> {booking.room.roomNumber}
+                    <strong>Room:</strong>{" "}
+                    {booking.room?.roomNumber || "N/A"}
                   </p>
 
                   <p className="mt-2">
@@ -162,8 +165,19 @@ const MyBookings = () => {
                   </p>
 
                   <div className="flex flex-wrap gap-3 mt-6">
-                    <span className="px-4 py-2 rounded-full bg-blue-100 text-blue-700">
-                      {booking.status}
+                    <span
+                      className={`px-4 py-2 rounded-full font-medium ${booking.status === "pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : booking.status === "confirmed"
+                            ? "bg-blue-100 text-blue-700"
+                            : booking.status === "checked_in"
+                              ? "bg-green-100 text-green-700"
+                              : booking.status === "checked_out"
+                                ? "bg-gray-200 text-gray-700"
+                                : "bg-red-100 text-red-700"
+                        }`}
+                    >
+                      {booking.status.replace("_", " ")}
                     </span>
 
                     <span className="px-4 py-2 rounded-full bg-green-100 text-green-700">

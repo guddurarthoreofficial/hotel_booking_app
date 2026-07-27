@@ -105,12 +105,7 @@ const getAllBookings = async (req, res) => {
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const {
-      search = "",
-      status,
-      paymentStatus,
-      paymentMethod,
-    } = req.query;
+    const { search = "", status, paymentStatus, paymentMethod } = req.query;
 
     const query = {};
 
@@ -221,17 +216,53 @@ const cancelBooking = async (req, res) => {
 
     const user = await User.findById(booking.guest);
 
-    await sendEmail(
-      user.email,
-      "Booking Cancelled",
-      `
+
+    let emailSubject = "";
+    let emailBody = "";
+
+    if (booking.paymentStatus === "paid") {
+      emailSubject = "Booking Cancelled - Refund Required";
+
+      emailBody = `
     <h2>Booking Cancelled</h2>
+
+    <p>Dear ${user.name},</p>
 
     <p>Your booking has been cancelled successfully.</p>
 
-    <p>Booking ID: ${booking._id}</p>
-  `,
-    );
+    <p><strong>Booking ID:</strong> ${booking._id}</p>
+
+    <p>Since your payment has already been received, please send the following details by replying to this email so that we can process your refund:</p>
+
+    <ul>
+      <li>Account Holder Name</li>
+      <li>Bank Account Number</li>
+      <li>IFSC Code</li>
+    </ul>
+
+    <p>After verification, your refund will be processed within <strong>5–7 business days</strong>.</p>
+
+    <p>Thank you,<br>Juhi Petals Hotel</p>
+  `;
+    } else {
+      emailSubject = "Booking Cancelled";
+
+      emailBody = `
+    <h2>Booking Cancelled</h2>
+
+    <p>Dear ${user.name},</p>
+
+    <p>Your booking has been cancelled successfully.</p>
+
+    <p><strong>Booking ID:</strong> ${booking._id}</p>
+
+    <p>We hope to serve you in the future.</p>
+
+    <p>Thank you,<br>Juhi Petals Hotel</p>
+  `;
+    }
+
+    await sendEmail(user.email, emailSubject, emailBody);
 
     res.status(200).json({
       success: true,
@@ -282,6 +313,21 @@ const checkInBooking = async (req, res) => {
         message: "Booking not found",
       });
     }
+    // Booking must be confirmed
+    if (booking.status !== "confirmed") {
+      return res.status(400).json({
+        success: false,
+        message: "Only confirmed bookings can be checked in.",
+      });
+    }
+
+    // Payment must be completed
+    if (booking.paymentStatus !== "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment is pending. Please complete payment first.",
+      });
+    }
 
     booking.status = "checked_in";
     await booking.save();
@@ -324,6 +370,20 @@ const checkOutBooking = async (req, res) => {
         message: "Booking not found",
       });
     }
+    // Booking must be checked in before checkout
+    if (booking.status === "checked_out") {
+      return res.status(400).json({
+        success: false,
+        message: "Guest has already checked out.",
+      });
+    }
+
+    if (booking.status !== "checked_in") {
+      return res.status(400).json({
+        success: false,
+        message: "Only checked-in guests can be checked out.",
+      });
+    }
 
     booking.status = "checked_out";
     await booking.save();
@@ -341,6 +401,45 @@ const checkOutBooking = async (req, res) => {
       user: req.user._id,
       icon: "checkout",
     });
+
+    const user = await User.findById(booking.guest._id);
+
+    await sendEmail(
+      user.email,
+      "Thank You for Staying with Juhi Petals Hotel",
+      `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2>Thank You for Staying with Us! ❤️</h2>
+
+    <p>Dear <strong>${booking.guest.name}</strong>,</p>
+
+    <p>We hope you had a wonderful stay at <strong>Juhi Petals Hotel</strong>.</p>
+
+    <hr>
+
+    <h3>Stay Summary</h3>
+
+    <p><strong>Booking ID:</strong> ${booking._id}</p>
+
+    <p><strong>Room Number:</strong> ${booking.room.roomNumber}</p>
+
+    <p><strong>Total Amount:</strong> ₹${booking.totalAmount}</p>
+
+    <p><strong>Check-Out Status:</strong> Successfully Completed</p>
+
+    <hr>
+
+    <p>Thank you for choosing Juhi Petals Hotel.</p>
+
+    <p>We look forward to welcoming you again in the future.</p>
+
+    <br>
+
+    <p>Best Regards,</p>
+    <h3>Juhi Petals Hotel</h3>
+  </div>
+`,
+    );
 
     res.status(200).json({
       success: true,
@@ -365,7 +464,21 @@ const markBookingAsPaid = async (req, res) => {
       });
     }
 
+    // Prevent duplicate payment
+    if (booking.paymentStatus === "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Booking is already marked as paid",
+      });
+    }
+
+    // Update payment status
     booking.paymentStatus = "paid";
+
+    // Confirm booking after successful payment
+    if (booking.status === "pending") {
+      booking.status = "confirmed";
+    }
 
     await booking.save();
 

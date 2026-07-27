@@ -1,7 +1,8 @@
 const razorpay = require("../config/razorpay");
 const Booking = require("../models/Booking");
-const crypto = require("crypto");
 const User = require("../models/User");
+const crypto = require("crypto");
+
 const sendEmail = require("../utils/sendEmail");
 const logActivity = require("../utils/logActivity");
 
@@ -16,20 +17,29 @@ const createPaymentOrder = async (req, res) => {
       });
     }
 
+    // Prevent payment for cancelled booking
+    if (booking.status === "cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Cancelled booking cannot be paid.",
+      });
+    }
+
+    // Prevent duplicate payment
+    if (booking.paymentStatus === "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment already completed.",
+      });
+    }
+
     const options = {
-      amount: booking.totalAmount * 100, // paise
+      amount: booking.totalAmount * 100,
       currency: "INR",
       receipt: `booking_${booking._id}`,
     };
 
     const order = await razorpay.orders.create(options);
-
-    await logActivity({
-      action: "Payment",
-      description: `Payment received ₹${booking.totalAmount}`,
-      user: req.user._id,
-      icon: "payment",
-    });
 
     res.status(200).json({
       success: true,
@@ -52,16 +62,14 @@ const verifyPayment = async (req, res) => {
       bookingId,
     } = req.body;
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
+      .update(body)
       .digest("hex");
 
-    const isAuthentic = expectedSignature === razorpay_signature;
-
-    if (!isAuthentic) {
+    if (expectedSignature !== razorpay_signature) {
       return res.status(400).json({
         success: false,
         message: "Invalid payment signature",
@@ -70,28 +78,63 @@ const verifyPayment = async (req, res) => {
 
     const booking = await Booking.findById(bookingId);
 
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    if (booking.paymentStatus === "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment already verified.",
+      });
+    }
+
+    // Update booking
     booking.paymentStatus = "paid";
+    booking.status = "confirmed";
     booking.transactionId = razorpay_payment_id;
 
     await booking.save();
 
+    // Activity Log
+    await logActivity({
+      action: "Payment",
+      description: `Payment received ₹${booking.totalAmount}`,
+      user: booking.guest,
+      icon: "payment",
+    });
+
+    // Send Email
     const user = await User.findById(booking.guest);
 
-    await sendEmail(
-      user.email,
-      "Payment Successful",
-      `
-    <h2>Payment Successful</h2>
+    if (user) {
+      await sendEmail(
+        user.email,
+        "Payment Successful",
+        `
+          <h2>Payment Successful 🎉</h2>
 
-    <p>Your payment has been received successfully.</p>
+          <p>Your payment has been received successfully.</p>
 
-    <p><strong>Booking ID:</strong> ${booking._id}</p>
+          <hr/>
 
-    <p><strong>Transaction ID:</strong> ${razorpay_payment_id}</p>
+          <p><strong>Booking ID:</strong> ${booking._id}</p>
 
-    <p><strong>Amount:</strong> ₹${booking.totalAmount}</p>
-  `,
-    );
+          <p><strong>Transaction ID:</strong> ${razorpay_payment_id}</p>
+
+          <p><strong>Amount:</strong> ₹${booking.totalAmount}</p>
+
+          <p><strong>Status:</strong> Confirmed</p>
+
+          <br/>
+
+          <p>Thank you for choosing <b>Juhi Petals Hotel</b>.</p>
+        `
+      );
+    }
 
     res.status(200).json({
       success: true,
