@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import {
   checkInBooking,
   checkOutBooking,
@@ -9,28 +11,49 @@ import {
 const BookingActions = ({ booking, refresh }) => {
   const handleCheckIn = async () => {
     try {
-      await checkInBooking(booking._id);
+      const res = await checkInBooking(booking._id);
+
+      toast.success(
+        res.data?.message || "Guest checked in successfully."
+      );
+
       refresh();
     } catch (err) {
-      console.error(err);
+      toast.error(
+        err.response?.data?.message || "Check-in failed."
+      );
     }
   };
 
   const handleCheckOut = async () => {
     try {
-      await checkOutBooking(booking._id);
+      const res = await checkOutBooking(booking._id);
+
+      toast.success(
+        res.data?.message || "Guest checked out successfully."
+      );
+
       refresh();
     } catch (err) {
-      console.error(err);
+      toast.error(
+        err.response?.data?.message || "Check-out failed."
+      );
     }
   };
 
   const handleMarkPaid = async () => {
     try {
-      await markBookingAsPaid(booking._id);
+      const res = await markBookingAsPaid(booking._id);
+
+      toast.success(
+        res.data?.message || "Payment marked as paid."
+      );
+
       refresh();
     } catch (err) {
-      console.error(err);
+      toast.error(
+        err.response?.data?.message || "Unable to mark payment."
+      );
     }
   };
 
@@ -43,13 +66,24 @@ const BookingActions = ({ booking, refresh }) => {
       );
 
       const link = document.createElement("a");
+
       link.href = url;
+
       link.download = `invoice-${booking._id}.pdf`;
+
+      document.body.appendChild(link);
+
       link.click();
 
+      link.remove();
+
       window.URL.revokeObjectURL(url);
+
+      toast.success("Invoice downloaded successfully.");
     } catch (err) {
-      console.error(err);
+      toast.error(
+        err.response?.data?.message || "Invoice download failed."
+      );
     }
   };
 
