@@ -8,6 +8,7 @@ const {
   checkInBooking,
   checkOutBooking,
   markBookingAsPaid,
+  getAllBookings,
 } = require("../controllers/bookingController");
 
 const protect = require("../middleware/authMiddleware");
@@ -19,10 +20,31 @@ router.post("/", protect, createBooking);
 router.get("/my", protect, getMyBookings);
 router.put("/:id/cancel", protect, cancelBooking);
 router.get("/:id", protect, getBookingById);
-router.put("/:id/checkin", protect, authorize("admin", "manager","receptionist"), checkInBooking);
-router.put("/:id/checkout", protect, authorize("admin", "manager", "receptionist"), checkOutBooking);
+router.put(
+  "/:id/checkin",
+  protect,
+  authorize("admin", "manager", "receptionist"),
+  checkInBooking,
+);
+router.put(
+  "/:id/checkout",
+  protect,
+  authorize("admin", "manager", "receptionist"),
+  checkOutBooking,
+);
 
-router.put("/:id/mark-paid", protect, authorize("admin", "manager", "receptionist"), markBookingAsPaid );
+router.put(
+  "/:id/mark-paid",
+  protect,
+  authorize("admin", "manager", "receptionist"),
+  markBookingAsPaid,
+);
 
+router.get(
+  "/",
+  protect,
+  authorize("admin", "manager", "receptionist"),
+  getAllBookings,
+);
 
 module.exports = router;

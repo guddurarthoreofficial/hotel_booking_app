@@ -99,6 +99,69 @@ const createBooking = async (req, res) => {
   }
 };
 
+const getAllBookings = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const {
+      search = "",
+      status,
+      paymentStatus,
+      paymentMethod,
+    } = req.query;
+
+    const query = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+
+    if (paymentMethod) {
+      query.paymentMethod = paymentMethod;
+    }
+
+    let bookings = await Booking.find(query)
+      .populate("guest", "name email phone")
+      .populate("room", "roomNumber roomType")
+      .sort({ createdAt: -1 });
+
+    if (search) {
+      const keyword = search.toLowerCase();
+
+      bookings = bookings.filter((booking) => {
+        return (
+          booking.guest?.name?.toLowerCase().includes(keyword) ||
+          booking.guest?.email?.toLowerCase().includes(keyword) ||
+          booking.room?.roomNumber?.toString().includes(keyword)
+        );
+      });
+    }
+
+    const totalBookings = bookings.length;
+
+    const paginatedBookings = bookings.slice(skip, skip + limit);
+
+    res.status(200).json({
+      success: true,
+      page,
+      totalPages: Math.ceil(totalBookings / limit),
+      totalBookings,
+      bookings: paginatedBookings,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const getMyBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({
@@ -347,4 +410,5 @@ module.exports = {
   checkInBooking,
   checkOutBooking,
   markBookingAsPaid,
+  getAllBookings,
 };
