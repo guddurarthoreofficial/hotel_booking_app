@@ -15,10 +15,7 @@ export const updateProfile = async (userData) => {
 };
 
 export const changePassword = async (passwordData) => {
-  const response = await api.put(
-    "/users/change-password",
-    passwordData
-  );
+  const response = await api.put("/users/change-password", passwordData);
   return response.data;
 };
 
@@ -43,20 +40,14 @@ export const getUserById = async (id) => {
 
 // Update User
 export const updateUser = async (id, userData) => {
-  const response = await api.put(
-    `/users/${id}`,
-    userData
-  );
+  const response = await api.put(`/users/${id}`, userData);
 
   return response.data;
 };
 
 // Update User Role
 export const updateUserRole = async (id, role) => {
-  const response = await api.patch(
-    `/users/${id}/role`,
-    { role }
-  );
+  const response = await api.patch(`/users/${id}/role`, { role });
 
   return response.data;
 };

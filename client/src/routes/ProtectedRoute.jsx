@@ -13,8 +13,8 @@ const ProtectedRoute = ({
     } = useAuth();
 
 
-    console.log(user);
-    console.log(isAuthenticated);
+    // console.log(user);
+    // console.log(isAuthenticated);
 
     if (loading) {
         return (
