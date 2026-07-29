@@ -9,7 +9,7 @@ const {
 
     // Admin APIs
   getUsers,
-  // getUserById,
+  getUserById,
   // updateUser,
   // updateUserStatus,
   // updateUserRole,
@@ -29,7 +29,7 @@ router.put("/change-password", protect, changePassword);
 
 /* Admin User Management */
 router.get("/", protect, authorize("admin"), getUsers);
-// router.get("/:id", protect, authorize("admin"), getUserById);
+router.get("/:id", protect, authorize("admin"), getUserById);
 // router.put("/:id", protect, authorize("admin"), updateUser);
 // router.patch("/:id/status", protect, authorize("admin"), updateUserStatus);
 // router.patch("/:id/role", protect, authorize("admin"), updateUserRole);
