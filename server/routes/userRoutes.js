@@ -12,7 +12,7 @@ const {
   getUserById,
   updateUser,
   // updateUserStatus,
-  // updateUserRole,
+  updateUserRole,
   // deleteUser,
 } = require("../controllers/userController");
 
@@ -32,7 +32,7 @@ router.get("/", protect, authorize("admin"), getUsers);
 router.get("/:id", protect, authorize("admin"), getUserById);
 router.put("/:id", protect, authorize("admin"), updateUser);
 // router.patch("/:id/status", protect, authorize("admin"), updateUserStatus);
-// router.patch("/:id/role", protect, authorize("admin"), updateUserRole);
+router.patch("/:id/role", protect, authorize("admin"), updateUserRole);
 // router.delete("/:id", protect, authorize("admin"), deleteUser);
 
 module.exports = router;
