@@ -151,8 +151,67 @@ const changePassword = async (req, res) => {
   }
 };
 
+
+
+
+const getUsers = async (req, res, next) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      role,
+      isActive,
+    } = req.query;
+
+    const query = {};
+
+    // Search
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { phone: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Role Filter
+    if (role) {
+      query.role = role;
+    }
+
+    // Status Filter
+    if (isActive !== undefined) {
+      query.isActive = isActive === "true";
+    }
+
+    const totalUsers = await User.countDocuments(query);
+
+    const users = await User.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * Number(limit))
+      .limit(Number(limit));
+
+    res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      users,
+
+      pagination: {
+        totalUsers,
+        currentPage: Number(page),
+        totalPages: Math.ceil(totalUsers / limit),
+        limit: Number(limit),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
   changePassword,
+  getUsers
 };

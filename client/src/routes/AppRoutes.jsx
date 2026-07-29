@@ -30,6 +30,7 @@ import Settings from "../pages/admin/Settings";
 import RoomDetailsAdmin from "../pages/admin/RoomDetails";
 import EditRoom from "../pages/admin/EditRoom";
 import AddRoom from "../pages/admin/AddRoom";
+import BookingDetails from "../pages/admin/BookingDetails";
 
 
 
@@ -109,6 +110,13 @@ const AppRoutes = () => {
           />
 
           <Route
+            path="bookings/:id"
+            element={<BookingDetails />}
+          />
+
+
+
+          <Route
             path="users"
             element={<UsersAdmin />}
           />
@@ -145,7 +153,7 @@ const AppRoutes = () => {
 
           <Route
             path="rooms/add"
-            element={<AddRoom/>}
+            element={<AddRoom />}
           />
 
         </Route>
