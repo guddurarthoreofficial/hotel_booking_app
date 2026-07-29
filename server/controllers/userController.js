@@ -232,10 +232,49 @@ const getUserById = async (req, res, next) => {
   }
 };
 
+const updateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      name,
+      phone,
+      role,
+      isActive,
+    } = req.body;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Update allowed fields only
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (role !== undefined) user.role = role;
+    if (isActive !== undefined)
+      user.isActive = isActive;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   getProfile,
   updateProfile,
   changePassword,
   getUsers,
   getUserById,
+  updateUser,
 };
