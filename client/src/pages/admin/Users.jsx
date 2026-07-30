@@ -11,11 +11,13 @@ import UserTable from "../../components/admin/users/UserTable";
 import UserViewModal from "../../components/admin/users/UserViewModal";
 import UserEditModal from "../../components/admin/users/UserEditModal";
 import UserFormModal from "../../components/admin/users/UserFormModal";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 import {
   getUsers,
   updateUser,
   createUser,
+  updateUserStatus
 } from "../../services/userService";
 
 import { toast } from "react-hot-toast";
@@ -29,6 +31,9 @@ const UsersPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+
+  const [selectedDeleteUser, setSelectedDeleteUser] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
 
   const [filters, setFilters] = useState({
@@ -114,6 +119,34 @@ const UsersPage = () => {
       toast.error(
         error?.response?.data?.message ||
         "Failed to create user"
+      );
+    }
+  };
+
+  const handleDeleteClick = (user) => {
+    setSelectedDeleteUser(user);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleToggleUserStatus = async () => {
+    try {
+      await updateUserStatus(selectedDeleteUser._id);
+
+      toast.success(
+        `User ${selectedDeleteUser.isActive
+          ? "deactivated"
+          : "activated"
+        } successfully`
+      );
+
+      setIsDeleteModalOpen(false);
+      setSelectedDeleteUser(null);
+
+      fetchUsers();
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        "Failed to update user status"
       );
     }
   };
@@ -292,6 +325,7 @@ const UsersPage = () => {
         users={users}
         onView={handleViewUser}
         onEdit={handleEditUser}
+        onDelete={handleDeleteClick}
       />
 
       <UserViewModal
@@ -306,6 +340,36 @@ const UsersPage = () => {
         user={selectedUser}
         onSave={handleSaveUser}
       />
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedDeleteUser(null);
+        }}
+        onConfirm={handleToggleUserStatus}
+        title={
+          selectedDeleteUser?.isActive
+            ? "Deactivate User"
+            : "Activate User"
+        }
+        message={`Are you sure you want to ${selectedDeleteUser?.isActive
+            ? "deactivate"
+            : "activate"
+          } ${selectedDeleteUser?.name}?`}
+        confirmText={
+          selectedDeleteUser?.isActive
+            ? "Deactivate"
+            : "Activate"
+        }
+        confirmColor={
+          selectedDeleteUser?.isActive
+            ? "red"
+            : "green"
+        }
+      />  
+
+
 
     </div>
   );

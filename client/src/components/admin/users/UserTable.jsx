@@ -8,6 +8,7 @@ const UserTable = ({
   users = [],
   onView,
   onEdit,
+  onDelete,
 }) => {
   console.log("UserTable Users:", users);
 
@@ -147,11 +148,16 @@ const UserTable = ({
                       </button>
 
                       <button
-                        className="rounded-lg bg-red-600 p-2 text-white transition hover:bg-red-700"
-                        title="Delete"
+                        onClick={() => onDelete(user)}
+                        className={`rounded-lg p-2 text-white transition ${user.isActive
+                            ? "bg-red-600 hover:bg-red-700"
+                            : "bg-green-600 hover:bg-green-700"
+                          }`}
+                        title={user.isActive ? "Deactivate User" : "Activate User"}
                       >
                         <Trash2 size={16} />
                       </button>
+                      
                     </div>
                   </td>
                 </tr>
