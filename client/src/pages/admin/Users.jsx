@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   Users,
   UserCheck,
@@ -13,6 +14,7 @@ const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   const [filters, setFilters] = useState({
     search: "",
     role: "",
@@ -21,14 +23,20 @@ const UsersPage = () => {
     limit: 10,
   });
 
+  const [debouncedSearch, setDebouncedSearch] =
+    useState(filters.search);
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
 
       // Filters baad me add karenge
-      const res = await getUsers();
+      const res = await getUsers({
+        ...filters,
+        search: debouncedSearch,
+      });
 
-      console.log("Users Response:", res);
+      // console.log("Users Response:", res);
 
       setUsers(res.users || []);
     } catch (error) {
@@ -39,8 +47,23 @@ const UsersPage = () => {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [filters.search]);
+
+  useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [
+    debouncedSearch,
+    filters.role,
+    filters.isActive,
+    filters.page,
+    filters.limit,
+  ]);
+
 
   if (loading) {
     return (
@@ -117,25 +140,64 @@ const UsersPage = () => {
         <div className="grid gap-4 lg:grid-cols-4">
           <input
             type="text"
-            placeholder="Search user..."
-            className="rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-amber-400"
+            placeholder="Search by name, email or phone..."
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                search: e.target.value,
+                page: 1,
+              }))
+            }
+            className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-amber-500"
           />
 
-          <select className="rounded-xl border border-slate-200 px-4 py-3">
-            <option>All Roles</option>
-            <option>Admin</option>
-            <option>Manager</option>
-            <option>Receptionist</option>
-            <option>Customer</option>
+          <select
+            value={filters.role}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                role: e.target.value,
+                page: 1,
+              }))
+            }
+            className="rounded-xl border border-slate-200 px-4 py-3"
+          >
+            <option value="">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+            <option value="receptionist">Receptionist</option>
+            <option value="customer">Customer</option>
           </select>
 
-          <select className="rounded-xl border border-slate-200 px-4 py-3">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Inactive</option>
+          <select
+            value={filters.isActive}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                isActive: e.target.value,
+                page: 1,
+              }))
+            }
+            className="rounded-xl border border-slate-200 px-4 py-3"
+          >
+            <option value="">All Status</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
           </select>
 
-          <button className="rounded-xl bg-red-500 py-3 font-medium text-white hover:bg-red-600">
+          <button
+            onClick={() =>
+              setFilters({
+                search: "",
+                role: "",
+                isActive: "",
+                page: 1,
+                limit: 10,
+              })
+            }
+            className="rounded-xl bg-red-500 py-3 font-medium text-white hover:bg-red-600"
+          >
             Reset
           </button>
         </div>

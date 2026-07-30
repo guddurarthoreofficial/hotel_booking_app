@@ -24,9 +24,26 @@ export const changePassword = async (passwordData) => {
 // ==============================
 
 // Get All Users
+// export const getUsers = async (params = {}) => {
+//   const response = await api.get("/users", {
+//     params,
+//   });
+
+//   return response.data;
+// };
+
 export const getUsers = async (params = {}) => {
+  const filteredParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([, value]) =>
+        value !== "" &&
+        value !== null &&
+        value !== undefined
+    )
+  );
+
   const response = await api.get("/users", {
-    params,
+    params: filteredParams,
   });
 
   return response.data;
