@@ -4,7 +4,10 @@ import {
   Trash2,
 } from "lucide-react";
 
-const UserTable = ({ users = [] }) => {
+const UserTable = ({
+  users = [],
+  onView,
+}) => {
   console.log("UserTable Users:", users);
 
   return (
@@ -86,15 +89,14 @@ const UserTable = ({ users = [] }) => {
                   <td className="px-6 py-5">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold
-                      ${
-                        user.role === "admin"
+                      ${user.role === "admin"
                           ? "bg-red-100 text-red-700"
                           : user.role === "manager"
-                          ? "bg-purple-100 text-purple-700"
-                          : user.role === "receptionist"
-                          ? "bg-indigo-100 text-indigo-700"
-                          : "bg-blue-100 text-blue-700"
-                      }`}
+                            ? "bg-purple-100 text-purple-700"
+                            : user.role === "receptionist"
+                              ? "bg-indigo-100 text-indigo-700"
+                              : "bg-blue-100 text-blue-700"
+                        }`}
                     >
                       {user.role}
                     </span>
@@ -104,11 +106,10 @@ const UserTable = ({ users = [] }) => {
 
                   <td className="px-6 py-5">
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        user.isActive
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${user.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                        }`}
                     >
                       {user.isActive ? "Active" : "Inactive"}
                     </span>
@@ -129,8 +130,9 @@ const UserTable = ({ users = [] }) => {
                   <td className="px-6 py-5">
                     <div className="flex items-center justify-center gap-2">
                       <button
+                        onClick={() => onView(user)}
                         className="rounded-lg bg-blue-600 p-2 text-white transition hover:bg-blue-700"
-                        title="View"
+                        title="View User"
                       >
                         <Eye size={16} />
                       </button>

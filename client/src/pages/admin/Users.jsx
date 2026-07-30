@@ -8,11 +8,16 @@ import {
 } from "lucide-react";
 
 import UserTable from "../../components/admin/users/UserTable";
+import UserViewModal from "../../components/admin/users/UserViewModal";
+
 import { getUsers } from "../../services/userService";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
 
   const [filters, setFilters] = useState({
@@ -44,6 +49,16 @@ const UsersPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setIsViewModalOpen(true);
+  };
+
+  const closeViewModal = () => {
+    setSelectedUser(null);
+    setIsViewModalOpen(false);
   };
 
   useEffect(() => {
@@ -205,7 +220,17 @@ const UsersPage = () => {
 
       {/* User Table */}
 
-      <UserTable users={users} />
+      <UserTable
+        users={users}
+        onView={handleViewUser}
+      />
+
+      <UserViewModal
+        isOpen={isViewModalOpen}
+        onClose={closeViewModal}
+        user={selectedUser}
+      />
+
     </div>
   );
 };
