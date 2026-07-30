@@ -10,13 +10,20 @@ import {
 import UserTable from "../../components/admin/users/UserTable";
 import UserViewModal from "../../components/admin/users/UserViewModal";
 import UserEditModal from "../../components/admin/users/UserEditModal";
+import UserFormModal from "../../components/admin/users/UserFormModal";
+
+import {
+  getUsers,
+  updateUser,
+  createUser,
+} from "../../services/userService";
 
 import { toast } from "react-hot-toast";
-import { getUsers, updateUser } from "../../services/userService";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -94,6 +101,23 @@ const UsersPage = () => {
     }
   };
 
+  const handleCreateUser = async (formData) => {
+    try {
+      await createUser(formData);
+
+      toast.success("User created successfully");
+
+      setIsAddModalOpen(false);
+
+      fetchUsers();
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        "Failed to create user"
+      );
+    }
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(filters.search);
@@ -139,10 +163,21 @@ const UsersPage = () => {
             </p>
           </div>
 
-          <button className="flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-3 font-semibold text-white transition hover:bg-amber-600">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-3 font-semibold text-white transition hover:bg-amber-600"
+          >
             <UserPlus size={18} />
             Add User
+
+            <UserFormModal
+              isOpen={isAddModalOpen}
+              onClose={() => setIsAddModalOpen(false)}
+              onSubmit={handleCreateUser}
+              mode="add"
+            />
           </button>
+
         </div>
       </div>
 

@@ -68,3 +68,16 @@ export const updateUserRole = async (id, role) => {
 
   return response.data;
 };
+
+
+// Create User
+export const createUser = async (userData) => {
+  const response = await api.post("/users", userData);
+  return response.data;
+};
+
+// Activate / Deactivate User
+export const updateUserStatus = async (id) => {
+  const response = await api.patch(`/users/${id}/status`);
+  return response.data;
+};
