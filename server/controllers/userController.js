@@ -321,12 +321,114 @@ const updateUserRole = async (req, res, next) => {
   }
 };
 
+const createUser = async (req, res, next) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      password,
+      role,
+    } = req.body;
+
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !password
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const existingUser = await User.findOne({
+      $or: [{ email }, { phone }],
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Email or phone already exists",
+      });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      phone,
+      password,
+      role: role || "customer",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateUserStatus = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (
+      req.user._id.toString() ===
+      user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "You cannot deactivate your own account.",
+      });
+    }
+
+    user.isActive = !user.isActive;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `User ${
+        user.isActive
+          ? "activated"
+          : "deactivated"
+      } successfully`,
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
   changePassword,
+
   getUsers,
   getUserById,
+
+  createUser,
   updateUser,
   updateUserRole,
+  updateUserStatus,
 };

@@ -7,6 +7,7 @@ import {
 const UserTable = ({
   users = [],
   onView,
+  onEdit,
 }) => {
   console.log("UserTable Users:", users);
 
@@ -138,8 +139,9 @@ const UserTable = ({
                       </button>
 
                       <button
+                        onClick={() => onEdit(user)}
                         className="rounded-lg bg-amber-500 p-2 text-white transition hover:bg-amber-600"
-                        title="Edit"
+                        title="Edit User"
                       >
                         <Pencil size={16} />
                       </button>

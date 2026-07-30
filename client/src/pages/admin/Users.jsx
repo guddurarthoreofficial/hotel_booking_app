@@ -9,14 +9,18 @@ import {
 
 import UserTable from "../../components/admin/users/UserTable";
 import UserViewModal from "../../components/admin/users/UserViewModal";
+import UserEditModal from "../../components/admin/users/UserEditModal";
 
-import { getUsers } from "../../services/userService";
+import { toast } from "react-hot-toast";
+import { getUsers, updateUser } from "../../services/userService";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
 
@@ -59,6 +63,35 @@ const UsersPage = () => {
   const closeViewModal = () => {
     setSelectedUser(null);
     setIsViewModalOpen(false);
+  };
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setSelectedUser(null);
+    setIsEditModalOpen(false);
+  };
+
+  const handleSaveUser = async (id, formData) => {
+    try {
+      await updateUser(id, formData);
+
+      toast.success("User updated successfully");
+
+      closeEditModal();
+
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error?.response?.data?.message ||
+        "Failed to update user"
+      );
+    }
   };
 
   useEffect(() => {
@@ -223,12 +256,20 @@ const UsersPage = () => {
       <UserTable
         users={users}
         onView={handleViewUser}
+        onEdit={handleEditUser}
       />
 
       <UserViewModal
         isOpen={isViewModalOpen}
         onClose={closeViewModal}
         user={selectedUser}
+      />
+
+      <UserEditModal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        user={selectedUser}
+        onSave={handleSaveUser}
       />
 
     </div>
