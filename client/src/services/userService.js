@@ -49,6 +49,26 @@ export const getUsers = async (params = {}) => {
   return response.data;
 };
 
+// export const getUsers = async ({
+//   page = 1,
+//   limit = 5,
+//   search = "",
+//   role = "",
+//   isActive = "",
+// }) => {
+//   const response = await api.get("/users", {
+//     params: {
+//       page,
+//       limit,
+//       search,
+//       role,
+//       isActive,
+//     },
+//   });
+
+//   return response.data;
+// };
+
 // Get User By ID
 export const getUserById = async (id) => {
   const response = await api.get(`/users/${id}`);
