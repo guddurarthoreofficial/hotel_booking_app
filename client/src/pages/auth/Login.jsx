@@ -61,10 +61,20 @@ const Login = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5"
+        className="space-y-6"
       >
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-slate-800">
+            Welcome Back 👋
+          </h2>
+
+          <p className="mt-2 text-slate-500">
+            Login to continue managing your hotel.
+          </p>
+        </div>
+
         <Input
-          label="Email"
+          label="Email Address"
           name="email"
           type="email"
           placeholder="Enter your email"
@@ -73,13 +83,11 @@ const Login = () => {
         />
 
         <div>
-
-          <label className="block mb-2 font-medium">
+          <label className="mb-2 block font-medium text-slate-700">
             Password
           </label>
 
           <div className="relative">
-
             <Input
               name="password"
               type={showPassword ? "text" : "password"}
@@ -93,58 +101,58 @@ const Login = () => {
               onClick={() =>
                 setShowPassword(!showPassword)
               }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-amber-500"
             >
               {showPassword ? (
-                <FaEyeSlash />
+                <FaEyeSlash size={18} />
               ) : (
-                <FaEye />
+                <FaEye size={18} />
               )}
             </button>
-
           </div>
-
         </div>
 
-
-        <div className="flex justify-between text-sm">
-
-          <label className="flex items-center gap-2">
-
-            <input type="checkbox" />
-
-            Remember me
-
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex cursor-pointer items-center gap-2 text-slate-600">
+            <input
+              type="checkbox"
+              className="accent-amber-500"
+            />
+            Remember Me
           </label>
 
           <button
             type="button"
-            className="text-amber-500 hover:underline"
+            className="font-medium text-amber-500 transition hover:text-amber-600 hover:underline"
           >
             Forgot Password?
           </button>
-
         </div>
 
         <Button
           type="submit"
           disabled={loading}
+          className="h-12 w-full rounded-xl bg-amber-500 text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:bg-amber-600 hover:shadow-xl"
         >
           {loading ? "Signing In..." : "Login"}
         </Button>
-        <p className="text-center mt-8 text-gray-600">
 
+        <div className="rounded-xl border border-amber-100 bg-amber-50 p-3 text-center">
+          <p className="text-sm text-slate-600">
+            🔒 Your account is protected with secure authentication.
+          </p>
+        </div>
+
+        <p className="text-center text-slate-600">
           Don't have an account?
 
           <span
             onClick={() => navigate("/register")}
-            className="text-amber-500 font-semibold ml-2 cursor-pointer hover:underline"
+            className="ml-2 cursor-pointer font-semibold text-amber-500 transition hover:text-amber-600 hover:underline"
           >
             Create Account
           </span>
-
         </p>
-
       </form>
 
     </AuthLayout>

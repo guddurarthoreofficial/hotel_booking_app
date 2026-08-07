@@ -6,7 +6,6 @@ const Card = ({
   hover = false,
   ...props
 }) => {
-
   const paddings = {
     sm: "p-5",
     md: "p-7",
@@ -29,7 +28,14 @@ const Card = ({
         border-gray-100
         ${paddings[padding]}
         ${shadows[shadow]}
-        ${hover ? "hover:-translate-y-1 hover:shadow-2xl transition-all duration-300" : ""}
+        m-4
+        md:m-6
+        lg:m-8
+        ${
+          hover
+            ? "hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
+            : ""
+        }
         ${className}
       `}
       {...props}

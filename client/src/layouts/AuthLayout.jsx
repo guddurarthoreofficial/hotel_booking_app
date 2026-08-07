@@ -1,71 +1,84 @@
-import { FaHotel, FaStar } from "react-icons/fa";
-import Card from "../components/ui/Card";
+import { FaHotel, FaStar, FaCheckCircle } from "react-icons/fa";
 
-const AuthLayout = ({ title, children }) => {
+const AuthLayout = ({ children }) => {
   return (
     <div
-      className="min-h-screen relative bg-cover bg-center flex items-center justify-center px-6 py-16"
+      className="min-h-screen bg-cover bg-center"
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1920&q=80')",
+          "url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070')",
       }}
     >
       {/* Overlay */}
+      <div className="min-h-screen bg-black/70 backdrop-blur-[2px]">
+        <div className="mx-auto flex min-h-screen max-w-7xl items-center px-8 py-8">
 
-      <div className="absolute inset-0 bg-black/70"></div>
+          {/* LEFT SIDE */}
+          <div className="hidden w-1/2 pr-10 text-white lg:flex lg:flex-col lg:justify-center">
 
-      {/* Content */}
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-400 shadow-xl">
+              <FaHotel className="text-5xl text-black" />
+            </div>
 
-      <div className="relative z-10 w-full max-w-md">
+            <h1 className="text-5xl font-extrabold">              Juhi Petals
+            </h1>
 
-        {/* Logo */}
+            <div className="mt-5 flex gap-1 text-amber-400 text-xl">
+              <FaStar />
+              <FaStar />
+              <FaStar />
+              <FaStar />
+              <FaStar />
+            </div>
 
-        <div className="text-center mb-8">
+            <p className="mt-5 max-w-md text-lg leading-8 text-gray-300">
+              Experience luxury hospitality with seamless hotel
+              management, secure bookings and premium guest services.
+            </p>
 
-          <div className="mx-auto w-20 h-20 rounded-3xl bg-amber-400 flex items-center justify-center shadow-2xl">
+            <div className="mt-8 space-y-4">
 
-            <FaHotel className="text-4xl text-black" />
+              <Feature text="Premium Luxury Rooms" />
+
+              <Feature text="Instant Online Booking" />
+
+              <Feature text="Secure Payment Gateway" />
+
+              <Feature text="24×7 Reception Support" />
+
+              <Feature text="Professional Hotel Dashboard" />
+
+            </div>
 
           </div>
 
-          <h1 className="text-4xl font-bold text-white mt-5">
+          {/* RIGHT SIDE */}
 
-            Juhi Petals
+          <div className="flex w-full justify-center lg:w-1/2">
 
-          </h1>
+            <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
 
-          <div className="flex justify-center gap-1 mt-3 text-amber-400">
+              {children}
 
-            <FaStar />
-            <FaStar />
-            <FaStar />
-            <FaStar />
-            <FaStar />
+            </div>
 
           </div>
-
-          <p className="text-gray-300 mt-3">
-            Luxury Hotel Experience
-          </p>
 
         </div>
-
-        <Card className="backdrop-blur-sm">
-
-          <h2 className="text-3xl font-bold text-center mb-8">
-
-            {title}
-
-          </h2>
-
-          {children}
-
-        </Card>
-
       </div>
-
     </div>
   );
 };
+
+const Feature = ({ text }) => (
+  <div className="flex items-center gap-4">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-black">
+      <FaCheckCircle />
+    </div>
+
+    <span className="text-base text-gray-200">      {text}
+    </span>
+  </div>
+);
 
 export default AuthLayout;
