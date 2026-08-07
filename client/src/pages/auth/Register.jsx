@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaUserPlus } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 
-import MainLayout from "../../layouts/MainLayout";
+import AuthLayout from "../../layouts/AuthLayout";
 import { useAuth } from "../../context/AuthContext";
+import Button from "../../components/ui/Button";
 
 const Register = () => {
   const navigate = useNavigate();
-
   const { register, loading } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +45,6 @@ const Register = () => {
 
     if (result.success) {
       toast.success(result.message);
-
       navigate("/");
     } else {
       toast.error(result.message);
@@ -53,150 +52,161 @@ const Register = () => {
   };
 
   return (
-    <MainLayout>
-      <section className="min-h-screen flex items-center justify-center bg-slate-100 py-16">
-
-        <div className="bg-white shadow-2xl rounded-3xl w-full max-w-lg p-10">
-
-          <div className="text-center">
-
-            <div className="mx-auto w-20 h-20 rounded-full bg-amber-400 flex items-center justify-center">
-
-              <FaUserPlus className="text-3xl text-black" />
-
-            </div>
-
-            <h1 className="text-4xl font-bold mt-6">
-              Create Account
-            </h1>
-
-            <p className="text-gray-500 mt-2">
-              Join Juhi Petals Hotel
-            </p>
-
-          </div>
-
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6 mt-10"
-          >
-
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full border rounded-xl p-4 focus:ring-2 focus:ring-amber-400 outline-none"
-            />
-
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full border rounded-xl p-4 focus:ring-2 focus:ring-amber-400 outline-none"
-            />
-
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              className="w-full border rounded-xl p-4 focus:ring-2 focus:ring-amber-400 outline-none"
-            />
-
-            <div className="relative">
-
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full border rounded-xl p-4 pr-14 focus:ring-2 focus:ring-amber-400 outline-none"
-              />
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
-                className="absolute right-5 top-5 text-gray-500"
-              >
-                {showPassword ? (
-                  <FaEyeSlash />
-                ) : (
-                  <FaEye />
-                )}
-              </button>
-
-            </div>
-
-            <div className="relative">
-
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="w-full border rounded-xl p-4 pr-14 focus:ring-2 focus:ring-amber-400 outline-none"
-              />
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowConfirmPassword(
-                    !showConfirmPassword
-                  )
-                }
-                className="absolute right-5 top-5 text-gray-500"
-              >
-                {showConfirmPassword ? (
-                  <FaEyeSlash />
-                ) : (
-                  <FaEye />
-                )}
-              </button>
-
-            </div>
-
-            <button
-              disabled={loading}
-              className="w-full bg-amber-400 hover:bg-amber-300 rounded-xl py-4 font-bold transition"
-            >
-              {loading
-                ? "Creating Account..."
-                : "Register"}
-            </button>
-
-          </form>
-
-          <p className="text-center mt-8 text-gray-600">
-
-            Already have an account?
-
-            <Link
-              to="/login"
-              className="ml-2 text-blue-600 font-semibold hover:underline"
-            >
-              Login
-            </Link>
-
+    <AuthLayout>
+      <form onSubmit={handleSubmit} className="space-y-3 max-w-md mx-auto py-2">
+        {/* Heading */}
+        <div className="mb-4 text-center">
+          <h2 className="text-2xl font-bold text-slate-800">
+            Create Account ✨
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Join Juhi Petals and start managing your hotel.
           </p>
-
         </div>
 
-      </section>
-    </MainLayout>
+        {/* Name */}
+        <div>
+          <label className="mb-1 block text-sm font-semibold text-slate-700">
+            Full Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Enter your full name"
+            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="mb-1 block text-sm font-semibold text-slate-700">
+            Email Address
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="mb-1 block text-sm font-semibold text-slate-700">
+            Phone Number
+          </label>
+          <input
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="Enter your phone number"
+            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+          />
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="mb-1 block text-sm font-semibold text-slate-700">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              className="w-full rounded-xl border border-slate-200 px-4 py-2.5 pr-12 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label className="mb-1 block text-sm font-semibold text-slate-700">
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm password"
+              className="w-full rounded-xl border border-slate-200 px-4 py-2.5 pr-12 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500"
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+        </div>
+
+        {/* Terms */}
+        <label className="flex items-start gap-2 text-xs text-slate-600">
+          <input
+            type="checkbox"
+            required
+            className="mt-0.5 accent-amber-500"
+          />
+          <span>
+            I agree to the{" "}
+            <span className="font-semibold text-amber-500">
+              Terms & Conditions
+            </span>{" "}
+            and{" "}
+            <span className="font-semibold text-amber-500">
+              Privacy Policy
+            </span>
+          </span>
+        </label>
+
+        {/* Button */}
+        <Button
+          type="submit"
+          disabled={loading}
+          className="h-11 w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-base font-semibold shadow-md hover:shadow-lg mt-2"
+        >
+          {loading ? "Creating Account..." : "Create Account"}
+        </Button>
+
+        {/* Security */}
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
+          <p className="text-center text-xs text-slate-600">
+            🔒 Your information is encrypted and securely stored.
+          </p>
+        </div>
+
+        {/* Login */}
+        <div className="border-t border-slate-200 pt-3 text-center">
+          <p className="text-xs text-slate-600">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="font-semibold text-amber-500 hover:text-amber-600 hover:underline"
+            >
+              Login Now
+            </button>
+          </p>
+        </div>
+      </form>
+    </AuthLayout>
   );
 };
 

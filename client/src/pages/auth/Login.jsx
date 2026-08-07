@@ -8,7 +8,6 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
-
   const navigate = useNavigate();
 
   const { login, loading } = useAuth();
@@ -34,7 +33,6 @@ const Login = () => {
     if (result.success) {
       toast.success(result.message);
 
-      // navigate("/");
       switch (result.user.role) {
         case "admin":
           navigate("/admin");
@@ -58,17 +56,13 @@ const Login = () => {
 
   return (
     <AuthLayout title="Login">
-
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6"
-      >
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-slate-800">
+      <form onSubmit={handleSubmit} className="space-y-3 max-w-md mx-auto py-2">
+        <div className="mb-4 text-center">
+          <h2 className="text-2xl font-bold text-slate-800">
             Welcome Back 👋
           </h2>
 
-          <p className="mt-2 text-slate-500">
+          <p className="mt-1 text-sm text-slate-500">
             Login to continue managing your hotel.
           </p>
         </div>
@@ -83,7 +77,7 @@ const Login = () => {
         />
 
         <div>
-          <label className="mb-2 block font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-slate-700">
             Password
           </label>
 
@@ -98,22 +92,20 @@ const Login = () => {
 
             <button
               type="button"
-              onClick={() =>
-                setShowPassword(!showPassword)
-              }
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-amber-500"
             >
               {showPassword ? (
-                <FaEyeSlash size={18} />
+                <FaEyeSlash size={16} />
               ) : (
-                <FaEye size={18} />
+                <FaEye size={16} />
               )}
             </button>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex cursor-pointer items-center gap-2 text-slate-600">
+        <div className="flex items-center justify-between text-xs">
+          <label className="flex cursor-pointer items-center gap-1.5 text-slate-600">
             <input
               type="checkbox"
               className="accent-amber-500"
@@ -132,29 +124,27 @@ const Login = () => {
         <Button
           type="submit"
           disabled={loading}
-          className="h-12 w-full rounded-xl bg-amber-500 text-base font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:bg-amber-600 hover:shadow-xl"
+          className="h-11 w-full rounded-xl bg-amber-500 text-base font-semibold transition-all duration-300 hover:bg-amber-600 hover:shadow-lg mt-2"
         >
           {loading ? "Signing In..." : "Login"}
         </Button>
 
-        <div className="rounded-xl border border-amber-100 bg-amber-50 p-3 text-center">
-          <p className="text-sm text-slate-600">
+        <div className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-center">
+          <p className="text-xs text-slate-600">
             🔒 Your account is protected with secure authentication.
           </p>
         </div>
 
-        <p className="text-center text-slate-600">
+        <p className="text-center text-xs text-slate-600 pt-1">
           Don't have an account?
-
           <span
             onClick={() => navigate("/register")}
-            className="ml-2 cursor-pointer font-semibold text-amber-500 transition hover:text-amber-600 hover:underline"
+            className="ml-1 cursor-pointer font-semibold text-amber-500 transition hover:text-amber-600 hover:underline"
           >
             Create Account
           </span>
         </p>
       </form>
-
     </AuthLayout>
   );
 };
