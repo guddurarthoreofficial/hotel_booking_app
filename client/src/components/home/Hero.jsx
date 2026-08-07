@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 
+
 const Hero = () => {
   return (
     <section
       className="relative h-screen bg-cover bg-center"
       style={{
-        backgroundImage: "url('/src/assets/images/hero.jpg')",
+        backgroundImage: "url('https://cdn.corenexis.com/f/iSrBhv6dvEw.png')",
       }}
     >
       {/* Overlay */}
